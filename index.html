@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Indian Catering Service</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Background image and overlay */
+    body {
+      background-image: url('https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      scroll-behavior: smooth;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .overlay-bg {
+      background-color: rgba(0, 0, 0, 0.6); /* Reduced opacity for more visible background */
+    }
+
+    /* Package cards hover and expand */
+    .package {
+      transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out, flex-grow 0.4s ease-in-out, margin 0.4s ease-in-out;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1; /* Default state */
+    }
+
+    .package:hover {
+      transform: translateZ(0); /* Smooth interaction when hovered */
+    }
+
+    .package.expanded {
+      flex-grow: 3; /* Expands larger when selected */
+      margin: 10px; /* Adds spacing for visual distinction */
+      box-shadow: 0 25px 35px rgba(255, 196, 0, 0.9);
+    }
+
+    .package.shrinked {
+      flex-grow: 0.5; /* Shrinks slightly when another is expanded */
+    }
+
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.6s ease-in-out, padding 0.6s ease-in-out;
+      padding: 0 10px;
+      margin-top: auto;
+    }
+
+    .details.open {
+      max-height: none; /* Ensures full content visibility when open */
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+
+    /* Testimonials carousel controls */
+    .testimonial-btn {
+      background-color: rgba(255, 196, 0, 0.8);
+      padding: 8px 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: black;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .testimonial-btn:hover {
+      background-color: #ffc400;
+    }
+
+    /* Contact form scrollbar style */
+    textarea::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    textarea::-webkit-scrollbar-thumb {
+      background-color: #ffc400;
+      border-radius: 3px;
+    }
+
+    /* Smooth scrolling for anchor links */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Smooth scroll offset for fixed header */
+    :target {
+      scroll-margin-top: 80px;
+    }
+  </style>
+</head>
+
+<body class="text-white">
+  <div class="overlay-bg min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <header class="bg-black bg-opacity-90 shadow-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <h1 class="text-3xl font-extrabold tracking-wider select-none text-yellow-400 cursor-default">Indian Catering</h1>
+        <nav class="flex gap-6 items-center text-lg font-semibold">
+          <a href="#home" class="hover:text-yellow-400 transition">Home</a>
+          <a href="#catering-services" class="hover:text-yellow-400 transition">Services</a>
+          <a href="#packages" class="hover:text-yellow-400 transition">Packages</a>
+          <a href="#testimonials" class="hover:text-yellow-400 transition">Testimonials</a>
+          <a href="#contact" class="hover:text-yellow-400 transition">Contact</a>
+          <a href="user-login.html"
+            class="bg-yellow-400 text-black px-5 py-2 rounded-lg font-bold hover:bg-yellow-500 transition">User Login</a>
+          <a href="admin-login.html"
+            class="bg-red-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-red-700 transition">Admin Login</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home"
+      class="w-full aspect-[5/3] max-h-[90vh] flex items-center justify-center bg-cover bg-center relative"
+      style="background-image: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1470&q=80');">
+      <div
+        class="bg-black bg-opacity-70 rounded-3xl p-10 md:px-20 md:py-14 max-w-5xl mx-4 text-center space-y-6 drop-shadow-xl">
+        <h2 class="text-5xl font-extrabold text-yellow-400 leading-tight">Your Event, Our Cuisine</h2>
+        <p class="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto">
+          Experience the rich and diverse flavors of authentic Indian cuisine at your next event. Whether it's a wedding,
+          birthday, or corporate party, we promise an unforgettable culinary journey.
+        </p>
+        <a href="user-login.html"
+          class="inline-block bg-yellow-400 text-black font-semibold px-8 py-3 rounded-full text-xl hover:bg-yellow-500 transition">Book
+          Now</a>
+      </div>
+    </section>
+
+    <!-- Catering Services -->
+    <section id="catering-services" class="py-20 bg-black bg-opacity-70"> <!-- Reduced opacity -->
+      <div class="max-w-6xl mx-auto px-6 text-center">
+        <h2 class="text-4xl font-extrabold text-yellow-400 mb-4">Our Catering Services</h2>
+        <p class="text-gray-300 text-lg max-w-3xl mx-auto mb-14">We specialize in crafting unforgettable menus for all
+          types of celebrations.</p>
+
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-5xl mx-auto cursor-pointer select-none">
+          <div class="bg-white bg-opacity-10 rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
+            <img
+              src="https://www.candidshutters.com/maintenance/wp-content/uploads/2024/06/Best-wedding-photographers-India-Top-5-destination-wedding-photographers-Indian-weddings-2.jpg"
+              alt="Weddings" class="rounded-t-xl w-full h-52 object-cover object-center" />
+            <div class="p-6 space-y-3">
+              <h3 class="text-2xl font-semibold text-yellow-300">Weddings</h3>
+              <p class="text-gray-300 text-base">Celebrate your special day with elegant and flavorful menus
+                customized for weddings.</p>
+            </div>
+          </div>
+
+          <div class="bg-white bg-opacity-10 rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
+            <img
+              src="https://5.imimg.com/data5/SELLER/Default/2022/4/SK/RX/LH/149898692/birthday-photography-service-500x500.png"
+              alt="Birthdays" class="rounded-t-xl w-full h-52 object-cover object-center" />
+            <div class="p-6 space-y-3">
+              <h3 class="text-2xl font-semibold text-yellow-300">Birthdays</h3>
+              <p class="text-gray-300 text-base">Make your birthday parties memorable with delicious dishes everyone
+                will love.</p>
+            </div>
+          </div>
+
+          <div class="bg-white bg-opacity-10 rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
+            <img
+              src="https://cybernag.in/wp-content/uploads/2024/07/diwali-blog-image.jpg"
+              alt="Festivals" class="rounded-t-xl w-full h-52 object-cover object-center" />
+            <div class="p-6 space-y-3">
+              <h3 class="text-2xl font-semibold text-yellow-300">Festivals</h3>
+              <p class="text-gray-300 text-base">Traditional delicacies for every festival and celebration throughout
+                the year.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catering Packages -->
+    <section id="packages" class="py-20 bg-black bg-opacity-60"> <!-- Reduced opacity -->
+      <div class="max-w-7xl mx-auto px-6 text-center">
+        <h2 class="text-4xl font-extrabold text-yellow-400 mb-6">Catering Packages</h2>
+        <p class="text-gray-300 text-lg max-w-4xl mx-auto mb-12">
+          Choose from our carefully crafted packages or customize your own.
+        </p>
+
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 max-w-6xl mx-auto select-none">
+
+          <!-- Package Basic -->
+          <div id="Basic" class="package bg-white bg-opacity-10 p-6 cursor-pointer" onclick="togglePackage(this)">
+            <h3 class="text-2xl font-bold mb-3 text-yellow-300">Basic Package</h3>
+            <p class="text-gray-300 mb-2 font-semibold">Serves: 50 People</p>
+            <p class="text-gray-300 mb-3 font-semibold">Price: ₹ 30,000</p>
+            <ul class="list-disc list-inside text-gray-400">
+              <li>Welcome Drinks</li>
+              <li>4 Veg Starters</li>
+              <li>Main Course - 3 Veg + 1 Non-Veg</li>
+              <li>Rice and Breads</li>
+              <li>Desserts</li>
+            </ul>
+            <div class="details text-left mt-5 text-gray-200"></div>
+          </div>
+
+          <!-- Package Standard -->
+          <div id="Standard" class="package bg-white bg-opacity-10 p-6 cursor-pointer" onclick="togglePackage(this)">
+            <h3 class="text-2xl font-bold mb-3 text-yellow-300">Standard Package</h3>
+            <p class="text-gray-300 mb-2 font-semibold">Serves: 100 People</p>
+            <p class="text-gray-300 mb-3 font-semibold">Price: ₹ 60,000</p>
+            <ul class="list-disc list-inside text-gray-400">
+              <li>Welcome Drinks + Mocktails</li>
+              <li>6 Veg Starters + 2 Non-Veg Starters</li>
+              <li>Main Course - 4 Veg + 3 Non-Veg</li>
+              <li>Rice, Breads & Salads</li>
+              <li>Desserts + Fruit Platter</li>
+            </ul>
+            <div class="details text-left mt-5 text-gray-200"></div>
+          </div>
+
+          <!-- Package Premium -->
+          <div id="Premium" class="package bg-white bg-opacity-10 p-6 cursor-pointer" onclick="togglePackage(this)">
+            <h3 class="text-2xl font-bold mb-3 text-yellow-300">Premium Package</h3>
+            <p class="text-gray-300 mb-2 font-semibold">Serves: 200 People</p>
+            <p class="text-gray-300 mb-3 font-semibold">Price: ₹ 1,20,000</p>
+            <ul class="list-disc list-inside text-gray-400">
+              <li>Welcome Drinks + Cocktails</li>
+              <li>8 Veg Starters + 5 Non-Veg Starters</li>
+              <li>Main Course - 6 Veg + 5 Non-Veg + Seafood</li>
+              <li>Rice, Breads, Salads & Soups</li>
+              <li>Desserts + Cheese & Fruit Platter</li>
+              <li>Live Counters and Buffet Service</li>
+            </ul>
+            <div class="details text-left mt-5 text-gray-200"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-20 bg-black bg-opacity-70"> <!-- Reduced opacity -->
+      <div class="max-w-5xl mx-auto px-6 text-center">
+        <h2 class="text-4xl font-extrabold text-yellow-400 mb-8">What Our Clients Say</h2>
+
+        <div class="relative overflow-hidden rounded-xl bg-white bg-opacity-10 p-10 max-w-3xl mx-auto text-gray-200 shadow-lg">
+          <div id="testimonial-text" class="text-xl italic mb-6 min-h-[120px]"></div>
+          <div id="testimonial-author" class="font-bold text-yellow-300 mb-6"></div>
+
+          <div class="flex justify-center gap-6">
+            <button class="testimonial-btn" onclick="prevTestimonial()">‹</button>
+            <button class="testimonial-btn" onclick="nextTestimonial()">›</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-black bg-opacity-80"> <!-- Reduced opacity -->
+      <div class="max-w-4xl mx-auto px-6 text-center text-gray-200">
+        <h2 class="text-4xl font-extrabold text-yellow-400 mb-6">Contact Us</h2>
+        <p class="mb-10">Have questions or want to book? Reach out and we'll get back to you promptly.</p>
+
+        <form id="contactForm" class="max-w-xl mx-auto space-y-6 text-left" novalidate>
+          <div>
+            <label for="name" class="block mb-2 font-semibold">Name</label>
+            <input type="text" id="name" name="name"
+              class="w-full p-3 rounded-md text-black focus:outline-yellow-400 focus:ring-2 focus:ring-yellow-400"
+              required />
+            <p class="text-red-500 text-sm hidden mt-1" id="nameError">Please enter your name</p>
+          </div>
+
+          <div>
+            <label for="email" class="block mb-2 font-semibold">Email</label>
+            <input type="email" id="email" name="email"
+              class="w-full p-3 rounded-md text-black focus:outline-yellow-400 focus:ring-2 focus:ring-yellow-400"
+              required />
+            <p class="text-red-500 text-sm hidden mt-1" id="emailError">Please enter a valid email</p>
+          </div>
+
+          <div>
+            <label for="message" class="block mb-2 font-semibold">Message</label>
+            <textarea id="message" name="message" rows="5"
+              class="w-full p-3 rounded-md text-black resize-y focus:outline-yellow-400 focus:ring-2 focus:ring-yellow-400"
+              required></textarea>
+            <p class="text-red-500 text-sm hidden mt-1" id="messageError">Please enter a message</p>
+          </div>
+
+          <button
+            class="bg-yellow-400 text-black font-bold px-8 py-3 rounded-lg hover:bg-yellow-500 transition w-full md:w-auto"
+            type="submit">Send Message</button>
+
+          <p id="formSuccess" class="text-green-400 font-semibold mt-4 hidden">Thanks for reaching out! We'll get back
+            to
+            you soon.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black bg-opacity-95 text-gray-400 text-center py-6 mt-auto">
+      <p>© 2025 Indian Catering Service. All rights reserved.</p>
+      <p>
+        Developed by <a href="#" class="text-yellow-400 hover:underline">Your Name</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Package descriptions for toggle
+    const packageDetails = {
+      Basic: `
+        <h4 class="font-semibold text-yellow-300 mb-3">Package Details</h4>
+        <p>Our Basic Package is perfect for intimate gatherings and smaller events. It includes:</p>
+        <ul class="list-disc ml-6 mt-2 space-y-1">
+          <li>Welcome Drinks to refresh your guests</li>
+          <li>4 varieties of vegetarian starters made with fresh local ingredients</li>
+          <li>A wholesome main course including 3 vegetarian and 1 non-vegetarian dish</li>
+          <li>Assortment of rice and breads baked fresh</li>
+          <li>Delicious desserts to finish the meal on a sweet note</li>
+        </ul>
+        <p class="mt-3 font-semibold">Service Style: Buffet</p>
+        <p>Duration: Up to 3 hours</p>
+        <p class="mt-2 text-yellow-300 font-bold">Ideal for small weddings, birthdays, and private parties.</p>
+      `,
+      Standard: `
+        <h4 class="font-semibold text-yellow-300 mb-3">Package Details</h4>
+        <p>The Standard Package offers a richer variety and larger quantity, suitable for medium-sized events:</p>
+        <ul class="list-disc ml-6 mt-2 space-y-1">
+          <li>Welcome Drinks & refreshing Mocktails</li>
+          <li>6 vegetarian and 2 non-vegetarian starters crafted by our chefs</li>
+          <li>Main course with 4 vegetarian and 3 non-vegetarian dishes, offering diverse flavors</li>
+          <li>Variety of rice, breads, and fresh salads</li>
+          <li>Delectable desserts accompanied by fresh fruit platters</li>
+        </ul>
+        <p class="mt-3 font-semibold">Service Style: Buffet with live salad counter</p>
+        <p>Duration: Up to 4 hours</p>
+        <p class="mt-2 text-yellow-300 font-bold">Great for larger weddings, anniversary parties, and corporate events.</p>
+      `,
+      Premium: `
+        <h4 class="font-semibold text-yellow-300 mb-3">Package Details</h4>
+        <p>Our Premium Package is designed for grand celebrations and offers an extensive menu:</p>
+        <ul class="list-disc ml-6 mt-2 space-y-1">
+          <li>Welcome Drinks & specialty Cocktails prepared by mixologists</li>
+          <li>8 vegetarian and 5 non-vegetarian starters including seafood options</li>
+          <li>Extensive main course with 6 vegetarian, 5 non-vegetarian dishes, and live cooking stations</li>
+          <li>Rice, breads, salads, soups, and gourmet sides</li>
+          <li>Deluxe desserts, cheese, and fresh fruit platters</li>
+          <li>Full-service buffet with professional staff and live counters</li>
+        </ul>
+        <p class="mt-3 font-semibold">Service Style: Full buffet with live stations and table service</p>
+        <p>Duration: Up to 6 hours</p>
+        <p class="mt-2 text-yellow-300 font-bold">Perfect for large weddings, gala dinners, and luxury events.</p>
+      `
+    };
+
+    // Package toggle logic
+    document.addEventListener('click', function (e) {
+      const packageElement = e.target.closest('.package');
+
+      // Collapse all packages if clicked outside
+      if (!packageElement) {
+        document.querySelectorAll('.package').forEach(pkg => {
+          pkg.classList.remove('expanded', 'shrinked');
+          pkg.querySelector('.details').classList.remove('open');
+          pkg.querySelector('.details').innerHTML = '';
+        });
+        return;
+      }
+
+      // Collapse all packages initially
+      document.querySelectorAll('.package').forEach(pkg => {
+        pkg.classList.remove('expanded', 'shrinked');
+        pkg.querySelector('.details').classList.remove('open');
+        pkg.querySelector('.details').innerHTML = '';
+      });
+
+      // Expand clicked package and shrink others
+      packageElement.classList.add('expanded');
+      document.querySelectorAll('.package').forEach(pkg => {
+        if (pkg !== packageElement) {
+          pkg.classList.add('shrinked');
+        }
+      });
+
+      // Populate and open details for specific package
+      const id = packageElement.id;
+      const detailsDiv = packageElement.querySelector('.details');
+      detailsDiv.innerHTML = packageDetails[id];
+      detailsDiv.classList.add('open');
+
+      // If necessary, scroll into view nicely
+      packageElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    });
+
+    // Testimonials data
+    const testimonials = [
+      {
+        text: "The Indian Catering team made our wedding truly unforgettable. The food was delicious and the service impeccable!",
+        author: "Anita Sharma, Bride"
+      },
+      {
+        text: "We booked the Standard Package for our company's annual party. Everyone loved the variety and quality!",
+        author: "Rahul Verma, Event Organizer"
+      },
+      {
+        text: "Excellent service and mouth-watering dishes for our Diwali festival. Highly recommended.",
+        author: "Priya Kapoor, Customer"
+      },
+      {
+        text: "From start to finish, the catering was professional and tasty. The premium package is worth every rupee!",
+        author: "Karan Singh, Businessman"
+      }
+    ];
+
+    let testimonialIndex = 0;
+
+    // Render testimonial
+    function renderTestimonial() {
+      const textEl = document.getElementById('testimonial-text');
+      const authorEl = document.getElementById('testimonial-author');
+      textEl.textContent = testimonials[testimonialIndex].text;
+      authorEl.textContent = "— " + testimonials[testimonialIndex].author;
+    }
+
+    function prevTestimonial() {
+      testimonialIndex = (testimonialIndex - 1 + testimonials.length) % testimonials.length;
+      renderTestimonial();
+    }
+
+    function nextTestimonial() {
+      testimonialIndex = (testimonialIndex + 1) % testimonials.length;
+      renderTestimonial();
+    }
+
+    // Initial render of testimonial
+    renderTestimonial();
+
+    // Contact form validation and submission
+    document.getElementById('contactForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Clear previous errors
+      document.getElementById('nameError').classList.add('hidden');
+      document.getElementById('emailError').classList.add('hidden');
+      document.getElementById('messageError').classList.add('hidden');
+      document.getElementById('formSuccess').classList.add('hidden');
+
+      let valid = true;
+      const name = this.name.value.trim();
+      const email = this.email.value.trim();
+      const message = this.message.value.trim();
+
+      // Name validation
+      if (name.length === 0) {
+        document.getElementById('nameError').classList.remove('hidden');
+        valid = false;
+      }
+
+      // Email validation
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        document.getElementById('emailError').classList.remove('hidden');
+        valid = false;
+      }
+
+      // Message validation
+      if (message.length === 0) {
+        document.getElementById('messageError').classList.remove('hidden');
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      // Simulate form submission (you can replace with actual API call)
+      setTimeout(() => {
+        this.reset();
+        document.getElementById('formSuccess').classList.remove('hidden');
+      }, 500);
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
