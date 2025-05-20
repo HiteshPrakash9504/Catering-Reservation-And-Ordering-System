@@ -393,11 +393,35 @@
       transition: .25s ease-in-out;
     }
 
+   /* Update hamburger menu styles */
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      position: relative;
+      z-index: 100;
+    }
+
+    .hamburger span {
+      display: block;
+      position: absolute;
+      height: 3px;
+      width: 100%;
+      background: var(--accent-color); /* Use accent color for better visibility */
+      border-radius: 3px;
+      opacity: 1;
+      left: 0;
+      transform: rotate(0deg);
+      transition: .25s ease-in-out;
+    }
+
     .hamburger span:nth-child(1) {
       top: 0px;
     }
 
-    .hamburger span:nth-child(2), .hamburger span:nth-child(3) {
+    .hamburger span:nth-child(2),
+    .hamburger span:nth-child(3) {
       top: 10px;
     }
 
@@ -430,10 +454,28 @@
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.5s ease-out;
+      position: absolute;
+      left: 0;
+      right: 0;
+      background-color: var(--primary-bg);
+      box-shadow: 0 4px 6px var(--card-shadow);
+      z-index: 90;
     }
 
     .mobile-menu.open {
       max-height: 500px;
+      padding: 1rem 0;
+    }
+
+    /* Show hamburger on mobile */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: block;
+      }
+      
+      .mobile-menu {
+        display: block;
+      }
     }
   </style>
 </head>
@@ -486,6 +528,7 @@
       </div>
       
       <!-- Mobile Menu -->
+      <!-- ========== UPDATED MOBILE MENU MARKUP ========== -->
       <div class="mobile-menu md:hidden" id="mobileMenu">
         <div class="px-4 py-2 flex flex-col space-y-3">
           <a href="#home" class="hover:text-accent transition py-2" onclick="toggleMenu()">Home</a>
@@ -494,7 +537,7 @@
           <a href="#testimonials" class="hover:text-accent transition py-2" onclick="toggleMenu()">Testimonials</a>
           <a href="#contact" class="hover:text-accent transition py-2" onclick="toggleMenu()">Contact</a>
           
-          <!-- Mobile Theme Options -->
+          <!-- Added theme options with close on click -->
           <div class="pt-2">
             <p class="text-sm font-semibold mb-1">Select Theme:</p>
             <div class="flex flex-col space-y-1">
@@ -503,11 +546,10 @@
             </div>
           </div>
           
+          <!-- Added login buttons -->
           <div class="flex flex-col space-y-2 pt-2">
-            <a href="user-login.html"
-              class="btn-primary px-4 py-2 rounded-lg font-bold transition text-center">User Login</a>
-            <a href="admin-login.html"
-              class="btn-secondary px-4 py-2 rounded-lg font-bold transition text-center">Admin Login</a>
+            <a href="user-login.html" class="btn-primary px-4 py-2 rounded-lg font-bold transition text-center">User Login</a>
+            <a href="admin-login.html" class="btn-secondary px-4 py-2 rounded-lg font-bold transition text-center">Admin Login</a>
           </div>
         </div>
       </div>
@@ -763,11 +805,11 @@
     
     // Mobile menu toggle
     function toggleMenu() {
-      const menu = document.getElementById('mobileMenu');
-      const hamburger = document.getElementById('hamburger');
-      menu.classList.toggle('open');
-      hamburger.classList.toggle('open');
-    }
+    const menu = document.getElementById('mobileMenu');
+    const hamburger = document.getElementById('hamburger');
+    menu.classList.toggle('open');
+    hamburger.classList.toggle('open');
+  }
 
     // Enhanced Package Toggle Functionality
     function togglePackage(clickedPackage, event) {
