@@ -6,57 +6,178 @@
   <title>Category Details</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* CSS Variables for theme */
+    :root {
+      --background-image-url: url('https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg');
+      --overlay-bg-color: rgba(0, 0, 0, 0.7); /* Dark theme overlay */
+      --text-color: white;
+      --header-bg: rgba(0, 0, 0, 0.8);
+      --main-bg: rgba(255, 255, 255, 0.1); /* Adjusted for consistency with dark mode */
+      --card-bg: rgba(255, 255, 255, 0.1);
+      --card-title-color: #facc15; /* yellow-300 */
+      --card-price-color: #facc15; /* yellow-400 */
+      --card-text-color: #d1d5db; /* gray-300 */
+      --footer-bg: rgba(0, 0, 0, 0.9);
+      --input-text-color: black; /* Input text color */
+    }
+
+    /* Light Theme Overrides */
+    body.light-theme {
+      --background-image-url: url('https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg'); /* A background with clearer shapes/colors for visibility */
+      --overlay-bg-color: rgba(255, 255, 255, 0.7); /* More opaque white overlay for better text contrast, still shows background */
+      --text-color: #333; /* Darker text for contrast */
+      --header-bg: rgba(255, 255, 255, 0.95); /* Almost solid white header */
+      --main-bg: rgba(255, 255, 255, 0.7); /* More opaque white for main content area */
+      --card-bg: rgba(255, 255, 255, 0.85); /* More opaque white for card backgrounds */
+      --card-title-color: #007bff; /* Blue for titles */
+      --card-price-color: #28a745; /* Green for prices */
+      --card-text-color: #555; /* Darker text */
+      --footer-bg: rgba(255, 255, 255, 0.95); /* Almost solid white footer */
+      --input-text-color: black;
+    }
+
+    /* Apply CSS variables */
     body {
-      background-image: url('https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg');
+      background-image: var(--background-image-url);
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
+      color: var(--text-color); /* Apply global text color */
     }
 
     .overlay-bg {
-      background-color: rgba(0, 0, 0, 0.7);
+      background-color: var(--overlay-bg-color);
     }
+
+    /* Apply theme to existing Tailwind classes by overriding */
+    .bg-black.bg-opacity-80 { background-color: var(--header-bg) !important; }
+    .text-white { color: var(--text-color) !important; } /* Ensure text color changes for generic .text-white */
+    .text-yellow-400 { color: var(--card-title-color) !important; } /* For category title */
+    .bg-white.bg-opacity-10 { background-color: var(--card-bg) !important; } /* For food item cards */
+    .text-yellow-300 { color: var(--card-title-color) !important; } /* For item titles inside cards */
+    .text-yellow-400 { color: var(--card-price-color) !important; } /* For item prices inside cards */
+    .text-gray-300 { color: var(--card-text-color) !important; } /* For item descriptions inside cards */
+    .bg-black.bg-opacity-90 { background-color: var(--footer-bg) !important; }
+
+    /* Specific overrides for elements that should remain black/yellow regardless of theme */
+    .bg-yellow-400 { background-color: #facc15 !important; }
+    .hover\:bg-yellow-500:hover { background-color: #eab308 !important; }
+    .bg-yellow-500 { background-color: #f59e0b !important; }
+    .hover\:bg-yellow-600:hover { background-color: #d97706 !important; }
+    .text-black { color: black !important; } /* Ensure elements explicitly text-black stay black */
+
+    /* Ensure input text color and background */
+    input[type="number"] {
+        color: var(--input-text-color) !important;
+        background-color: rgba(255, 255, 255, 0.95); /* Nearly solid white background for inputs */
+        border: 1px solid #ccc; /* Add a subtle border for definition */
+    }
+    body.light-theme input[type="number"] {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-color: #999; /* Slightly darker border for light theme */
+    }
+
 
     html {
       scroll-behavior: smooth;
+    }
+
+    /* Styles for the theme switch dropdown */
+    .theme-switch-container {
+      position: relative;
+      display: inline-block;
+      z-index: 60; /* Higher z-index to ensure it's on top */
+    }
+
+    .theme-switch-icon {
+      cursor: pointer;
+      font-size: 1.5rem; /* Adjust size as needed */
+      color: #facc15; /* Yellow color for the palette icon */
+      padding: 0.5rem;
+      border-radius: 9999px; /* For a circular button */
+      transition: background-color 0.2s ease;
+    }
+
+    .theme-switch-icon:hover {
+      background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect */
+    }
+
+    .theme-options {
+      display: none; /* Hidden by default */
+      position: absolute;
+      top: 100%; /* Position below the icon */
+      right: 0;
+      background-color: var(--header-bg); /* Use header background for consistency */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 0.375rem; /* rounded-md */
+      overflow: hidden;
+      min-width: 8rem; /* Sufficient width for options */
+    }
+
+    .theme-options.active {
+      display: block; /* Show when active */
+    }
+
+    .theme-option-btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      color: var(--text-color); /* Inherit text color */
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .theme-option-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1); /* Light hover for dark theme */
+    }
+
+    body.light-theme .theme-option-btn:hover {
+      background-color: rgba(0, 0, 0, 0.05); /* Darker hover for light theme */
     }
   </style>
 </head>
 
 <body class="text-white">
   <div class="overlay-bg min-h-screen">
-    
-    <!-- ✅ Navbar -->
+
     <header class="bg-black bg-opacity-80 shadow-md sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center text-white">
         <h1 class="text-2xl font-bold">Indian Catering</h1>
         <nav class="flex gap-4 items-center">
           <a href="index.html#home" class="hover:underline">Home</a>
+
+          <div class="theme-switch-container">
+            <button id="themePaletteBtn" class="theme-switch-icon" title="Toggle Theme">
+              🎨 </button>
+            <div id="themeOptions" class="theme-options">
+              <button class="theme-option-btn" data-theme="light">Light Theme</button>
+              <button class="theme-option-btn" data-theme="dark">Dark Theme</button>
+            </div>
+          </div>
           <button id="logoutBtn" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500">Logout</button>
         </nav>
       </div>
     </header>
 
-    <!-- 🌟 Category Detail Section -->
     <main class="max-w-6xl mx-auto py-12 px-4">
       <h1 id="categoryTitle" class="text-4xl font-bold text-yellow-400 text-center mb-10">Category Name</h1>
 
       <div id="foodItems" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Food items rendered here -->
-      </div>
+        </div>
 
       <p id="categoryDescription" class="text-center mt-10 text-gray-300"></p>
     </main>
 
-    <!-- Place Your Order Button -->
     <div class="text-center mt-8">
-      <button onclick="submitOrder()" class="bg-yellow-500 text-black px-6 py-3 rounded-lg text-lg font-bold hover:bg-yellow-600">
+      <button id="placeOrderBtn" class="bg-yellow-500 text-black px-6 py-3 rounded-lg text-lg font-bold hover:bg-yellow-600">
         Place Your Order
       </button>
-    </div>    
+    </div>
 
 
-    <!-- ✅ Footer -->
     <footer class="bg-black bg-opacity-90 text-white text-center py-4">
       &copy; 2025 Indian Catering Services. All rights reserved.
     </footer>
@@ -69,43 +190,43 @@
         name: "Veg Indian Dishes",
         items: {
           "Paneer Butter Masala": {
-            image: "https://www.cookwithmanali.com/wp-content/uploads/2014/10/Paneer-Butter-Masala-500x375.jpg",
+            image: "https://www.mygingergarlickitchen.com/wp-content/rich-markup-images/1x1/1x1-restaurant-style-paneer-butter-masala-paneer-makhani-video-recipe.jpg",
             quantity: 0,
             price: 220,
             recipe: "Soft paneer cubes cooked in a rich and creamy tomato-based gravy."
           },
           "Palak Paneer": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/palak-paneer-recipe.jpg",
+            image: "https://healthynibblesandbits.com/wp-content/uploads/2020/01/Saag-Paneer-FF.jpg",
             quantity: 0,
             price: 200,
             recipe: "Paneer cubes simmered in a spiced spinach gravy."
           },
           "Paneer Tikka": {
-            image: "https://www.vegrecipesofindia.com/wp-content/uploads/2021/02/paneer-tikka-1.jpg",
+            image: "https://www.cookwithmanali.com/wp-content/uploads/2015/07/Restaurant-Style-Recipe-Paneer-Tikka-500x500.jpg",
             quantity: 0,
             price: 180,
             recipe: "Marinated paneer cubes grilled or baked, served with mint chutney."
           },
           "Shahi Paneer": {
-            image: "https://myfoodstory.com/wp-content/uploads/2021/06/Shahi-Paneer-1.jpg",
+            image: "https://cheeseforthought.com/wp-content/uploads/2024/09/indian-pub-shahi-paneer-masala-recipe.png",
             quantity: 0,
             price: 240,
             recipe: "Paneer cooked in a royal, creamy sauce made with nuts and spices."
           },
           "Naan": {
-            image: "https://www.indianveggiedelight.com/wp-content/uploads/2021/09/naan-bread-featured.jpg",
+            image: "https://foodess.com/wp-content/uploads/2023/02/Butter-Naan-3.jpg",
             quantity: 0,
             price: 50,
             recipe: "Soft, leavened flatbread, often served with curries."
           },
           "Roti (Chapati)": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/06/roti-recipe.jpg",
+            image: "https://www.simplyrecipes.com/thmb/kfKdjryQIBH-MkGQXqN9mSfu-Yc=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Roti-LEAD-3-38a1295fbb884aaabd42a34bcad9ea82.jpg",
             quantity: 0,
             price: 20,
             recipe: "Whole wheat unleavened flatbread, a staple in Indian meals."
           },
           "Paratha": {
-            image: "https://www.cookwithmanali.com/wp-content/uploads/2019/09/Laccha-Paratha-500x500.jpg",
+            image: "https://ministryofcurry.com/wp-content/uploads/2021/03/Parathas-6-850x1275.jpg",
             quantity: 0,
             price: 40,
             recipe: "Flaky, layered flatbread, often stuffed with various fillings."
@@ -194,37 +315,37 @@
         name: "Non-Veg Indian Dishes",
         items: {
           "Butter Chicken": {
-            image: "https://www.cubesnjuliennes.com/wp-content/uploads/2020/07/Chicken-Makhani-Recipe-500x500.jpg",
+            image: "https://freshchoice.imgix.net/assets/recipes/iStock-879661732.jpg",
             quantity: 0,
             price: 280,
             recipe: "Creamy tomato curry with tender chicken."
           },
           "Chicken Tikka Masala": {
-            image: "https://www.whiskaffair.com/wp-content/uploads/2020/06/Chicken-Tikka-Masala-2-3-500x500.jpg",
+            image: "https://www.cubesnjuliennes.com/wp-content/uploads/2018/05/Chicken-Tikka-Masala-recipe.jpg",
             quantity: 0,
             price: 260,
             recipe: "Grilled chicken chunks in creamy spiced sauce."
           },
           "Kadai Chicken": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/kadai-chicken-recipe.jpg",
+            image: "https://cdn.grofers.com/assets/search/usecase/banner/kadhai_chicken_01.png",
             quantity: 0,
             price: 270,
             recipe: "Chicken with bell peppers and aromatic spices."
           },
           "Chicken Biryani": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2019/04/chicken-biryani-recipe-500x500.jpg",
+            image: "https://www.cubesnjuliennes.com/wp-content/uploads/2020/07/Chicken-Biryani-Recipe.jpg",
             quantity: 0,
             price: 250,
             recipe: "Aromatic rice layered with spiced chicken."
           },
           "Jeera Rice": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/jeera-rice-recipe-500x500.jpg",
+            image: "https://mariasmenu.com/wp-content/uploads/Jeera-Rice-1-500x500.png",
             quantity: 0,
             price: 120,
             recipe: "Fragrant basmati rice with cumin seeds."
           },
           "Pulao": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/vegetable-pulao-recipe-500x500.jpg",
+            image: "https://easyindiancookbook.com/wp-content/uploads/2022/03/coconut-milk-pulao-instant-pot-5.jpg",
             quantity: 0,
             price: 140,
             recipe: "Mild spiced rice dish with veggies."
@@ -343,37 +464,37 @@
         name: "Chinese Dishes",
         items: {
           "Chilli Chicken": {
-            image: "https://www.whiskaffair.com/wp-content/uploads/2021/04/Chilli-Chicken-2-3-500x500.jpg",
+            image: "https://vismaifood.com/storage/app/uploads/public/65b/760/990/thumb__700_0_0_0_auto.jpg",
             quantity: 0,
             price: 220,
             recipe: "Spicy chicken pieces tossed with bell peppers and onions."
           },
           "Chilli Paneer": {
-            image: "https://www.whiskaffair.com/wp-content/uploads/2020/08/Chilli-Paneer-2-3-500x500.jpg",
+            image: "https://howtomakerecipes.com/wp-content/uploads/2023/01/chilli-paneer-starter-recipe1.jpg",
             quantity: 0,
             price: 200,
             recipe: "Paneer cubes in a spicy sauce with vegetables."
           },
           "Veg Manchurian": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/veg-manchurian-recipe-500x500.jpg",
+            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/07/veg-manchurian.jpg",
             quantity: 0,
             price: 180,
             recipe: "Fried vegetable balls in a tangy sauce."
           },
           "Hakka Noodles": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/hakka-noodles-recipe-500x500.jpg",
+            image: "https://www.cubesnjuliennes.com/wp-content/uploads/2020/06/Spicy-Chicken-Hakka-Noodles-Recipe.jpg",
             quantity: 0,
             price: 150,
             recipe: "Stir-fried noodles with vegetables and sauces."
           },
           "Fried Rice": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/veg-fried-rice-recipe-500x500.jpg",
+            image: "https://shwetainthekitchen.com/wp-content/uploads/2023/06/veg-fried-rice.jpg",
             quantity: 0,
             price: 160,
             recipe: "Rice stir-fried with vegetables, eggs, or meat."
           },
           "Gobi Manchurian": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/gobi-manchurian-recipe-500x500.jpg",
+            image: "https://images.immediate.co.uk/production/volatile/sites/30/2024/09/GobiManchurian-ad8498d.jpg",
             quantity: 0,
             price: 170,
             recipe: "Cauliflower florets in a spicy, tangy sauce."
@@ -468,37 +589,37 @@
         name: "Continental Dishes",
         items: {
           "Pizza": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2015/10/pizza-recipe-1-500x500.jpg",
+            image: "https://www.foodandwine.com/thmb/Wd4lBRZz3X_8qBr69UOu2m7I2iw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/classic-cheese-pizza-FT-RECIPE0422-31a2c938fc2546c9a07b7011658cfd05.jpg",
             quantity: 0,
             price: 250,
             recipe: "Classic Italian dish with various toppings on a baked flatbread."
           },
           "Burger": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/veg-burger-recipe-500x500.jpg",
+            image: "https://www.foodandwine.com/thmb/pwFie7NRkq4SXMDJU6QKnUKlaoI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Ultimate-Veggie-Burgers-FT-Recipe-0821-5d7532c53a924a7298d2175cf1d4219f.jpg",
             quantity: 0,
             price: 120,
             recipe: "Juicy patties served in a bun with toppings like lettuce, tomato, and cheese."
           },
           "French Fries": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/french-fries-recipe-500x500.jpg",
+            image: "https://thecozycook.com/wp-content/uploads/2020/02/Copycat-McDonalds-French-Fries-.jpg",
             quantity: 0,
             price: 80,
             recipe: "Crispy potato strips, often seasoned and served as a side."
           },
           "Pasta": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/pasta-recipe-500x500.jpg",
+            image: "https://s.lightorangebean.com/media/20240914160809/Spicy-Penne-Pasta_-done.png",
             quantity: 0,
             price: 180,
             recipe: "Spaghetti, penne, or macaroni served with sauces like marinara or Alfredo."
           },
           "Grilled Chicken": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/grilled-chicken-recipe-500x500.jpg",
+            image: "https://www.licious.in/blog/wp-content/uploads/2020/12/Grilled-Chicken-min.jpg",
             quantity: 0,
             price: 220,
             recipe: "Marinated chicken grilled until tender and juicy."
           },
           "Fish and Chips": {
-            image: "https://www.whiskaffair.com/wp-content/uploads/2020/07/Fish-And-Chips-1-3-500x500.jpg",
+            image: "https://static01.nyt.com/images/2025/03/19/multimedia/MC-Baked-Fish-and-Chips-clbm/MC-Baked-Fish-and-Chips-clbm-mediumSquareAt3X-v3.jpg",
             quantity: 0,
             price: 240,
             recipe: "Battered and fried fish served with crispy fries."
@@ -533,37 +654,37 @@
         name: "South Indian Dishes",
         items: {
           "Idli": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/idli-recipe-500x500.jpg",
+            image: "https://www.foodie-trail.com/wp-content/uploads/2021/03/PHOTO-2021-03-01-17-35-19.jpg",
             quantity: 0,
             price: 60,
             recipe: "Steamed rice cakes, often served with sambar and coconut chutney."
           },
           "Dosa": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/dosa-recipe-500x500.jpg",
+            image: "https://content.jdmagicbox.com/comp/vadodara/r4/0265px265.x265.200107173503.d2r4/catalogue/chula-dhosa-waghodia-road-vadodara-restaurants-with-offers-4a32dfbmmr.jpg",
             quantity: 0,
             price: 80,
             recipe: "Thin, crispy crepes made from fermented rice and lentil batter, served with chutneys and sambar."
           },
           "Vada": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/vada-recipe-500x500.jpg",
+            image: "https://www.nehascookbook.com/wp-content/uploads/2022/09/Medu-vada-with-sambar-WS-1.jpg",
             quantity: 0,
             price: 50,
             recipe: "Savory lentil doughnuts, typically served with sambar and chutney."
           },
           "Sambar": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/sambar-recipe-500x500.jpg",
+            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/05/sambar.jpg",
             quantity: 0,
             price: 70,
             recipe: "Lentil-based vegetable stew flavored with tamarind and a special blend of South Indian spices."
           },
           "Rasam": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/rasam-recipe-500x500.jpg",
+            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2022/01/rasam.jpg",
             quantity: 0,
             price: 60,
             recipe: "A tangy soup made with tamarind, tomatoes, and spices, often served as a starter or with rice."
           },
           "Uttapam": {
-            image: "https://www.indianhealthyrecipes.com/wp-content/uploads/2021/08/uttapam-recipe-500x500.jpg",
+            image: "https://rakskitchen.net/wp-content/uploads/2013/03/8527219504_0ddb2cde6f_z-500x500.jpg",
             quantity: 0,
             price: 90,
             recipe: "Thick, soft pancakes made with rice and lentil batter, topped with chopped vegetables."
@@ -593,12 +714,12 @@
             recipe: "Crispy dosa filled with a spiced potato mash, served with sambar and coconut chutney."
           }
         }
-      }      
+      }
     };
 
     const urlParams = new URLSearchParams(window.location.search);
     const categoryId = urlParams.get('category');
-    
+
     // Redirect if invalid category
     if (!categoryId || !foodData[categoryId]) {
       window.location.href = "index.html";
@@ -620,11 +741,11 @@
           <img src="${image}" alt="${item}" class="w-full h-40 object-cover mb-4 rounded-md">
           <h3 class="text-xl font-semibold text-yellow-300">${item}</h3>
           <p class="text-lg font-bold text-yellow-400">Rs ${price}</p>
-          <p class="text-sm text-gray-300 mt-1">Quantity: 
-            <input type="number" 
-                   value="${quantity}" 
-                   class="w-16 p-1 rounded text-black" 
-                   min="0" 
+          <p class="text-sm text-gray-300 mt-1">Quantity:
+            <input type="number"
+                   value="${quantity}"
+                   class="w-16 p-1 rounded text-black"
+                   min="0"
                    data-item="${encodeURIComponent(item)}"
                    onchange="updateQuantity(this)"/>
           </p>
@@ -643,43 +764,93 @@
 
     // Submit order function
     function submitOrder() {
-  console.log("Submit Order Clicked");
+      console.log("Submit Order Clicked");
 
-  const selectedItems = [];
+      const selectedItems = [];
 
-  for (let item in category.items) {
-    if (category.items[item].quantity > 0) {
-      selectedItems.push({
-        name: item,
-        quantity: category.items[item].quantity,
-        price: category.items[item].price,
-        image: category.items[item].image
-      });
+      for (let item in category.items) {
+        if (category.items[item].quantity > 0) {
+          selectedItems.push({
+            name: item,
+            quantity: category.items[item].quantity,
+            price: category.items[item].price,
+            image: category.items[item].image
+          });
+        }
+      }
+
+      if (selectedItems.length === 0) {
+        alert("Please select at least one item to proceed.");
+        return;
+      }
+
+      // Save to localStorage and redirect
+      localStorage.setItem("selectedOrder", JSON.stringify({
+        category: category.name,
+        items: selectedItems
+      }));
+
+      window.location.href = "summary.html";
     }
-  }
 
-  if (selectedItems.length === 0) {
-    alert("Please select at least one item to proceed.");
-    return;
-  }
+    // Add event listener for Place Your Order button
+    document.getElementById('placeOrderBtn').addEventListener('click', submitOrder);
 
-  // Save to localStorage and redirect
-  localStorage.setItem("selectedOrder", JSON.stringify({
-    category: category.name,
-    items: selectedItems
-  }));
 
-  window.location.href = "summary.html";
-}
+    // --- Theme Switcher Logic ---
+    const themePaletteBtn = document.getElementById('themePaletteBtn');
+    const themeOptions = document.getElementById('themeOptions');
+    const themeOptionBtns = themeOptions.querySelectorAll('.theme-option-btn');
+    const body = document.body;
 
-// PASTE THIS LINE RIGHT HERE AFTER submitOrder()
-document.getElementById('placeOrderBtn').addEventListener('click', submitOrder);
+    // Function to set theme
+    function setTheme(theme) {
+      if (theme === 'light') {
+        body.classList.add('light-theme');
+      } else {
+        body.classList.remove('light-theme');
+      }
+      localStorage.setItem('theme', theme); // Save preference
+    }
+
+    // Toggle theme options visibility
+    themePaletteBtn.addEventListener('click', (event) => {
+      event.stopPropagation(); // Prevent click from bubbling to document
+      themeOptions.classList.toggle('active');
+    });
+
+    // Handle clicks on Light/Dark theme buttons
+    themeOptionBtns.forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        const selectedTheme = event.target.dataset.theme;
+        setTheme(selectedTheme);
+        themeOptions.classList.remove('active'); // Hide options after selection
+      });
+    });
+
+    // Hide theme options if clicked outside
+    document.addEventListener('click', (event) => {
+      if (!themeOptions.contains(event.target) && !themePaletteBtn.contains(event.target)) {
+        themeOptions.classList.remove('active');
+      }
+    });
+
+    // Check for saved theme preference on load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else {
+      // Default to dark theme if no preference is saved
+      setTheme('dark');
+    }
+    // --- End Theme Switcher Logic ---
+
 
     // Logout button functionality
     document.getElementById('logoutBtn').addEventListener('click', function() {
       // Clear cart and redirect
       localStorage.removeItem('selectedOrder');
-      window.location.href = "index.html";
+      window.location.href = "user-login.html";
     });
   </script>
 </body>

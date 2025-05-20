@@ -3,176 +3,566 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Indian Catering Service</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Background image and overlay */
+    /* Base styles */
     body {
       background-image: url('https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
-      scroll-behavior: smooth;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      scroll-behavior: smooth;
+      transition: background-color 0.3s ease;
     }
 
+    /* Enhanced background visibility */
     .overlay-bg {
-      background-color: rgba(0, 0, 0, 0.6); /* Reduced opacity for more visible background */
+      background-color: rgba(0, 0, 0, 0.6);
+      min-height: 100vh;
+    }
+    
+    .dark .overlay-bg {
+      background-color: rgba(0, 0, 0, 0.7);
     }
 
-    /* Package cards hover and expand */
+    /* Light Theme */
+    :root {
+      --primary-bg: rgba(255, 255, 255, 0.85);
+      --secondary-bg: rgba(248, 249, 250, 0.8);
+      --text-color: #333333;
+      --accent-color: #4ade80;
+      --accent-hover: #22c55e;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-shadow: rgba(0, 0, 0, 0.08);
+      --section-overlay: rgba(248, 249, 250, 0.7);
+      --border-color: rgba(0, 0, 0, 0.1);
+      --text-muted: #6b7280;
+      --package-text: #4b5563;
+      --package-text-muted: #6b7280;
+    }
+
+    /* Dark Theme */
+    .dark {
+      --primary-bg: rgba(0, 0, 0, 0.85);
+      --secondary-bg: rgba(0, 0, 0, 0.75);
+      --text-color: #ffffff;
+      --accent-color: #f59e0b;
+      --accent-hover: #fbbf24;
+      --card-bg: rgba(0, 0, 0, 0.7);
+      --card-shadow: rgba(0, 0, 0, 0.3);
+      --section-overlay: rgba(0, 0, 0, 0.6);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --text-muted: #d1d5db;
+      --package-text: #e5e7eb;
+      --package-text-muted: #9ca3af;
+    }
+
+    /* Updated Navigation Styles */
+    .desktop-nav a {
+      color: var(--text-color);
+      transition: color 0.3s ease;
+    }
+    
+    .desktop-nav a:hover {
+      color: var(--accent-color);
+    }
+    
+    .mobile-menu a {
+      color: var(--text-color);
+      transition: color 0.3s ease;
+    }
+    
+    .mobile-menu a:hover {
+      color: var(--accent-color);
+    }
+    
+    /* Theme dropdown text color */
+    .theme-dropdown button {
+      color: var(--text-color);
+    }
+    
+    /* Theme dropdown options */
+    .theme-dropdown-content .theme-option {
+      color: var(--text-color);
+    }
+    
+    .dark .theme-dropdown-content .theme-option {
+      color: white;
+    }
+    
+    /* Mobile menu theme options */
+    .mobile-menu .theme-option {
+      color: var(--text-color);
+    }
+
+    /* Hero section */
+    .hero-section {
+      width: 100%;
+      height: 90vh;
+      max-height: 90vh;
+      min-height: 600px;
+      background-image: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1470&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-content {
+      background-color: var(--primary-bg);
+      color: var(--text-color);
+      backdrop-filter: blur(2px);
+    }
+
+    /* All content sections */
+    .content-section {
+      background-color: var(--section-overlay);
+      backdrop-filter: blur(3px);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Package Grid Responsive Layout */
+    .package-grid {
+      display: grid;
+      gap: 1.5rem;
+      width: 100%;
+      /* Mobile: 1 column */
+      grid-template-columns: 1fr;
+    }
+    
+    @media (min-width: 768px) {
+      /* Tablet: 2 columns */
+      .package-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      /* Desktop: 3 columns */
+      .package-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    /* Package Card Styling */
     .package {
-      transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out, flex-grow 0.4s ease-in-out, margin 0.4s ease-in-out;
-      cursor: pointer;
-      position: relative;
+      background-color: var(--card-bg);
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px var(--card-shadow);
       overflow: hidden;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1; /* Default state */
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
     }
-
-    .package:hover {
-      transform: translateZ(0); /* Smooth interaction when hovered */
+    
+    .package:hover:not(.expanded) {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px var(--card-shadow);
     }
-
+    
+    /* Expanded Package Styling */
     .package.expanded {
-      flex-grow: 3; /* Expands larger when selected */
-      margin: 10px; /* Adds spacing for visual distinction */
-      box-shadow: 0 25px 35px rgba(255, 196, 0, 0.9);
+      grid-column: 1 / -1;
+      z-index: 10;
+      box-shadow: 0 25px 35px rgba(74, 222, 128, 0.3);
     }
-
+    
+    .dark .package.expanded {
+      box-shadow: 0 25px 35px rgba(245, 158, 11, 0.4);
+    }
+    
+    /* Shrinked Package Styling */
     .package.shrinked {
-      flex-grow: 0.5; /* Shrinks slightly when another is expanded */
+      opacity: 0.7;
+      transform: scale(0.95);
+      filter: blur(1px);
     }
-
-    .details {
+    
+    /* Package Content Transitions */
+    .package-content {
+      padding: 1.5rem;
+    }
+    
+    .package-details {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.6s ease-in-out, padding 0.6s ease-in-out;
-      padding: 0 10px;
-      margin-top: auto;
+      transition: max-height 0.5s ease, padding 0.5s ease;
+    }
+    
+    .package.expanded .package-details {
+      max-height: 1000px;
+      padding-top: 1rem;
     }
 
-    .details.open {
-      max-height: none; /* Ensures full content visibility when open */
-      padding-top: 15px;
-      padding-bottom: 15px;
+    /* Package text styles */
+    .package ul {
+      color: var(--package-text);
     }
 
-    /* Testimonials carousel controls */
+    .package p:not(.text-accent) {
+      color: var(--package-text);
+    }
+
+    .package .text-muted {
+      color: var(--package-text-muted);
+    }
+
+    /* Testimonials */
+    .testimonial-container {
+      background-color: var(--card-bg);
+      box-shadow: 0 10px 15px var(--card-shadow);
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(3px);
+    }
+
     .testimonial-btn {
-      background-color: rgba(255, 196, 0, 0.8);
+      background-color: var(--accent-color);
+      color: white;
       padding: 8px 12px;
       border-radius: 50%;
       cursor: pointer;
-      color: black;
       font-weight: bold;
       transition: background-color 0.3s ease;
     }
 
     .testimonial-btn:hover {
-      background-color: #ffc400;
+      background-color: var(--accent-hover);
     }
 
-    /* Contact form scrollbar style */
-    textarea::-webkit-scrollbar {
-      width: 6px;
+    /* Contact form */
+    .contact-form {
+      background-color: var(--card-bg);
+      box-shadow: 0 10px 15px var(--card-shadow);
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid var(--border-color);
     }
 
-    textarea::-webkit-scrollbar-thumb {
-      background-color: #ffc400;
+    /* Navigation */
+    header {
+      background-color: var(--primary-bg);
+      box-shadow: 0 2px 4px var(--card-shadow);
+      backdrop-filter: blur(5px);
+    }
+
+    .mobile-menu {
+      background-color: var(--primary-bg);
+      box-shadow: 0 4px 6px var(--card-shadow);
+    }
+
+    /* Text colors */
+    .text-accent {
+      color: var(--accent-color);
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #dc2626;
+    }
+
+    /* Theme switcher dropdown */
+    .theme-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .theme-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: var(--card-bg);
+      min-width: 120px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .theme-dropdown:hover .theme-dropdown-content {
+      display: block;
+    }
+
+    .theme-option {
+      padding: 8px 16px;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .theme-option:hover {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .theme-option.active {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .hero-content {
+        padding: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      /* Navigation */
+      .desktop-nav {
+        display: none;
+      }
+      
+      .hamburger span {
+        background-color: var(--text-color);
+      }
+      
+      /* Hero section */
+      .hero-section {
+        min-height: 500px;
+        height: auto;
+      }
+      
+      .hero-content {
+        padding: 1.5rem;
+      }
+      
+      h2 {
+        font-size: 2rem;
+      }
+      
+      /* Theme dropdown for mobile */
+      .theme-dropdown-content {
+        position: static;
+        box-shadow: none;
+        border: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      /* Hero section */
+      .hero-content h2 {
+        font-size: 1.8rem;
+      }
+      
+      .contact-form {
+        padding: 1.5rem;
+      }
+    }
+
+    /* Hamburger menu icon */
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      position: relative;
+    }
+
+    .hamburger span {
+      display: block;
+      position: absolute;
+      height: 3px;
+      width: 100%;
+      background: var(--text-color);
       border-radius: 3px;
+      opacity: 1;
+      left: 0;
+      transform: rotate(0deg);
+      transition: .25s ease-in-out;
     }
 
-    /* Smooth scrolling for anchor links */
-    html {
-      scroll-behavior: smooth;
+    .hamburger span:nth-child(1) {
+      top: 0px;
     }
 
-    /* Smooth scroll offset for fixed header */
-    :target {
-      scroll-margin-top: 80px;
+    .hamburger span:nth-child(2), .hamburger span:nth-child(3) {
+      top: 10px;
+    }
+
+    .hamburger span:nth-child(4) {
+      top: 20px;
+    }
+
+    .hamburger.open span:nth-child(1) {
+      top: 10px;
+      width: 0%;
+      left: 50%;
+    }
+
+    .hamburger.open span:nth-child(2) {
+      transform: rotate(45deg);
+    }
+
+    .hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg);
+    }
+
+    .hamburger.open span:nth-child(4) {
+      top: 10px;
+      width: 0%;
+      left: 50%;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out;
+    }
+
+    .mobile-menu.open {
+      max-height: 500px;
     }
   </style>
 </head>
 
-<body class="text-white">
+<body class="dark"> <!-- Default to dark theme -->
   <div class="overlay-bg min-h-screen flex flex-col">
     <!-- Navbar -->
-    <header class="bg-black bg-opacity-90 shadow-md sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 class="text-3xl font-extrabold tracking-wider select-none text-yellow-400 cursor-default">Indian Catering</h1>
-        <nav class="flex gap-6 items-center text-lg font-semibold">
-          <a href="#home" class="hover:text-yellow-400 transition">Home</a>
-          <a href="#catering-services" class="hover:text-yellow-400 transition">Services</a>
-          <a href="#packages" class="hover:text-yellow-400 transition">Packages</a>
-          <a href="#testimonials" class="hover:text-yellow-400 transition">Testimonials</a>
-          <a href="#contact" class="hover:text-yellow-400 transition">Contact</a>
-          <a href="user-login.html"
-            class="bg-yellow-400 text-black px-5 py-2 rounded-lg font-bold hover:bg-yellow-500 transition">User Login</a>
-          <a href="admin-login.html"
-            class="bg-red-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-red-700 transition">Admin Login</a>
+    <header class="sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center justify-between w-full md:w-auto">
+          <h1 class="text-2xl md:text-3xl font-extrabold tracking-wider select-none text-accent cursor-default">Indian Catering</h1>
+          <div class="md:hidden">
+            <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+        
+        <nav class="desktop-nav hidden md:flex gap-4 lg:gap-6 items-center text-base lg:text-lg font-semibold">
+          <a href="#home" class="hover:text-accent transition">Home</a>
+          <a href="#catering-services" class="hover:text-accent transition">Services</a>
+          <a href="#packages" class="hover:text-accent transition">Packages</a>
+          <a href="#testimonials" class="hover:text-accent transition">Testimonials</a>
+          <a href="#contact" class="hover:text-accent transition">Contact</a>
+          
+          <!-- Theme Dropdown -->
+          <div class="theme-dropdown">
+            <button class="flex items-center gap-1 hover:text-accent">
+              <span>Theme</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="theme-dropdown-content">
+              <div class="theme-option" onclick="setTheme('light')">Light</div>
+              <div class="theme-option active" onclick="setTheme('dark')">Dark</div>
+            </div>
+          </div>
+          
+          <div class="flex gap-2">
+            <a href="user-login.html"
+              class="btn-primary px-3 py-1 md:px-4 md:py-2 rounded-lg font-bold transition text-sm md:text-base">User Login</a>
+            <a href="admin-login.html"
+              class="btn-secondary px-3 py-1 md:px-4 md:py-2 rounded-lg font-bold transition text-sm md:text-base">Admin Login</a>
+          </div>
         </nav>
+      </div>
+      
+      <!-- Mobile Menu -->
+      <div class="mobile-menu md:hidden" id="mobileMenu">
+        <div class="px-4 py-2 flex flex-col space-y-3">
+          <a href="#home" class="hover:text-accent transition py-2" onclick="toggleMenu()">Home</a>
+          <a href="#catering-services" class="hover:text-accent transition py-2" onclick="toggleMenu()">Services</a>
+          <a href="#packages" class="hover:text-accent transition py-2" onclick="toggleMenu()">Packages</a>
+          <a href="#testimonials" class="hover:text-accent transition py-2" onclick="toggleMenu()">Testimonials</a>
+          <a href="#contact" class="hover:text-accent transition py-2" onclick="toggleMenu()">Contact</a>
+          
+          <!-- Mobile Theme Options -->
+          <div class="pt-2">
+            <p class="text-sm font-semibold mb-1">Select Theme:</p>
+            <div class="flex flex-col space-y-1">
+              <div class="theme-option" onclick="setTheme('light'); toggleMenu()">Light Theme</div>
+              <div class="theme-option active" onclick="setTheme('dark'); toggleMenu()">Dark Theme</div>
+            </div>
+          </div>
+          
+          <div class="flex flex-col space-y-2 pt-2">
+            <a href="user-login.html"
+              class="btn-primary px-4 py-2 rounded-lg font-bold transition text-center">User Login</a>
+            <a href="admin-login.html"
+              class="btn-secondary px-4 py-2 rounded-lg font-bold transition text-center">Admin Login</a>
+          </div>
+        </div>
       </div>
     </header>
 
     <!-- Hero Section -->
-    <section id="home"
-      class="w-full aspect-[5/3] max-h-[90vh] flex items-center justify-center bg-cover bg-center relative"
-      style="background-image: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1470&q=80');">
-      <div
-        class="bg-black bg-opacity-70 rounded-3xl p-10 md:px-20 md:py-14 max-w-5xl mx-4 text-center space-y-6 drop-shadow-xl">
-        <h2 class="text-5xl font-extrabold text-yellow-400 leading-tight">Your Event, Our Cuisine</h2>
-        <p class="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto">
+    <section id="home" class="hero-section flex items-center justify-center">
+      <div class="hero-content rounded-xl md:rounded-3xl p-8 md:p-10 lg:px-20 lg:py-14 max-w-5xl mx-4 text-center space-y-6 shadow-lg">
+        <h2 class="text-4xl md:text-5xl font-extrabold text-accent leading-tight">Your Event, Our Cuisine</h2>
+        <p class="text-lg md:text-xl text-muted max-w-3xl mx-auto">
           Experience the rich and diverse flavors of authentic Indian cuisine at your next event. Whether it's a wedding,
           birthday, or corporate party, we promise an unforgettable culinary journey.
         </p>
         <a href="user-login.html"
-          class="inline-block bg-yellow-400 text-black font-semibold px-8 py-3 rounded-full text-xl hover:bg-yellow-500 transition">Book
-          Now</a>
+          class="inline-block btn-primary font-semibold px-8 py-3 rounded-full text-lg md:text-xl hover:bg-accent-hover transition">Book Now</a>
       </div>
     </section>
 
     <!-- Catering Services -->
-    <section id="catering-services" class="py-20 bg-black bg-opacity-70"> <!-- Reduced opacity -->
-      <div class="max-w-6xl mx-auto px-6 text-center">
-        <h2 class="text-4xl font-extrabold text-yellow-400 mb-4">Our Catering Services</h2>
-        <p class="text-gray-300 text-lg max-w-3xl mx-auto mb-14">We specialize in crafting unforgettable menus for all
+    <section id="catering-services" class="py-12 md:py-20 content-section">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-accent mb-4">Our Catering Services</h2>
+        <p class="text-muted text-base md:text-lg max-w-3xl mx-auto mb-8 md:mb-14">We specialize in crafting unforgettable menus for all
           types of celebrations.</p>
 
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-5xl mx-auto cursor-pointer select-none">
-          <div class="bg-white bg-opacity-10 rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
+        <div class="package-grid">
+          <div class="package rounded-xl transition duration-300">
             <img
               src="https://www.candidshutters.com/maintenance/wp-content/uploads/2024/06/Best-wedding-photographers-India-Top-5-destination-wedding-photographers-Indian-weddings-2.jpg"
-              alt="Weddings" class="rounded-t-xl w-full h-52 object-cover object-center" />
-            <div class="p-6 space-y-3">
-              <h3 class="text-2xl font-semibold text-yellow-300">Weddings</h3>
-              <p class="text-gray-300 text-base">Celebrate your special day with elegant and flavorful menus
+              alt="Weddings" class="rounded-t-xl w-full h-48 md:h-52 object-cover object-center" />
+            <div class="p-4 md:p-6 space-y-2 md:space-y-3">
+              <h3 class="text-xl md:text-2xl font-semibold text-accent">Weddings</h3>
+              <p class="text-sm md:text-base">Celebrate your special day with elegant and flavorful menus
                 customized for weddings.</p>
             </div>
           </div>
 
-          <div class="bg-white bg-opacity-10 rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
+          <div class="package rounded-xl transition duration-300">
             <img
               src="https://5.imimg.com/data5/SELLER/Default/2022/4/SK/RX/LH/149898692/birthday-photography-service-500x500.png"
-              alt="Birthdays" class="rounded-t-xl w-full h-52 object-cover object-center" />
-            <div class="p-6 space-y-3">
-              <h3 class="text-2xl font-semibold text-yellow-300">Birthdays</h3>
-              <p class="text-gray-300 text-base">Make your birthday parties memorable with delicious dishes everyone
+              alt="Birthdays" class="rounded-t-xl w-full h-48 md:h-52 object-cover object-center" />
+            <div class="p-4 md:p-6 space-y-2 md:space-y-3">
+              <h3 class="text-xl md:text-2xl font-semibold text-accent">Birthdays</h3>
+              <p class="text-sm md:text-base">Make your birthday parties memorable with delicious dishes everyone
                 will love.</p>
             </div>
           </div>
 
-          <div class="bg-white bg-opacity-10 rounded-xl shadow-lg hover:shadow-2xl transition duration-300">
+          <div class="package rounded-xl transition duration-300">
             <img
               src="https://cybernag.in/wp-content/uploads/2024/07/diwali-blog-image.jpg"
-              alt="Festivals" class="rounded-t-xl w-full h-52 object-cover object-center" />
-            <div class="p-6 space-y-3">
-              <h3 class="text-2xl font-semibold text-yellow-300">Festivals</h3>
-              <p class="text-gray-300 text-base">Traditional delicacies for every festival and celebration throughout
+              alt="Festivals" class="rounded-t-xl w-full h-48 md:h-52 object-cover object-center" />
+            <div class="p-4 md:p-6 space-y-2 md:space-y-3">
+              <h3 class="text-xl md:text-2xl font-semibold text-accent">Festivals</h3>
+              <p class="text-sm md:text-base">Traditional delicacies for every festival and celebration throughout
                 the year.</p>
             </div>
           </div>
@@ -181,76 +571,100 @@
     </section>
 
     <!-- Catering Packages -->
-    <section id="packages" class="py-20 bg-black bg-opacity-60"> <!-- Reduced opacity -->
-      <div class="max-w-7xl mx-auto px-6 text-center">
-        <h2 class="text-4xl font-extrabold text-yellow-400 mb-6">Catering Packages</h2>
-        <p class="text-gray-300 text-lg max-w-4xl mx-auto mb-12">
-          Choose from our carefully crafted packages or customize your own.
-        </p>
+<section id="packages" class="py-12 md:py-20 content-section">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+    <h2 class="text-3xl md:text-4xl font-extrabold text-accent mb-4 md:mb-6">Catering Packages</h2>
+    <p class="text-muted text-base md:text-lg max-w-4xl mx-auto mb-8 md:mb-12">
+      Choose from our carefully crafted packages or customize your own.
+    </p>
 
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 max-w-6xl mx-auto select-none">
-
-          <!-- Package Basic -->
-          <div id="Basic" class="package bg-white bg-opacity-10 p-6 cursor-pointer" onclick="togglePackage(this)">
-            <h3 class="text-2xl font-bold mb-3 text-yellow-300">Basic Package</h3>
-            <p class="text-gray-300 mb-2 font-semibold">Serves: 50 People</p>
-            <p class="text-gray-300 mb-3 font-semibold">Price: ₹ 30,000</p>
-            <ul class="list-disc list-inside text-gray-400">
+    <div class="package-grid max-w-6xl mx-auto select-none px-4">
+      <!-- Basic Package -->
+      <div class="package" onclick="togglePackage(this, event)">
+        <img src="https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+             alt="Basic Package" class="w-full h-48 object-cover">
+        <div class="package-content">
+          <h3 class="text-xl font-bold text-accent mb-2">Basic Package</h3>
+          <p class="mb-4">Perfect for small gatherings</p>
+          <div class="package-details">
+            <p class="font-semibold mb-2">Price: ₹30,000 (for 50 people)</p>
+            <ul class="list-disc pl-5 space-y-1 mb-4">
               <li>Welcome Drinks</li>
               <li>4 Veg Starters</li>
-              <li>Main Course - 3 Veg + 1 Non-Veg</li>
+              <li>3 Veg + 1 Non-Veg Main Course</li>
               <li>Rice and Breads</li>
               <li>Desserts</li>
             </ul>
-            <div class="details text-left mt-5 text-gray-200"></div>
+            <button class="btn-primary px-4 py-2 rounded-md transition" onclick="window.location.href='user-login.html'">
+              Book Now
+            </button>
           </div>
-
-          <!-- Package Standard -->
-          <div id="Standard" class="package bg-white bg-opacity-10 p-6 cursor-pointer" onclick="togglePackage(this)">
-            <h3 class="text-2xl font-bold mb-3 text-yellow-300">Standard Package</h3>
-            <p class="text-gray-300 mb-2 font-semibold">Serves: 100 People</p>
-            <p class="text-gray-300 mb-3 font-semibold">Price: ₹ 60,000</p>
-            <ul class="list-disc list-inside text-gray-400">
+        </div>
+      </div>
+      
+      <!-- Standard Package -->
+      <div class="package" onclick="togglePackage(this, event)">
+        <img src="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+             alt="Standard Package" class="w-full h-48 object-cover">
+        <div class="package-content">
+          <h3 class="text-xl font-bold text-accent mb-2">Standard Package</h3>
+          <p class="mb-4">Ideal for medium events</p>
+          <div class="package-details">
+            <p class="font-semibold mb-2">Price: ₹60,000 (for 100 people)</p>
+            <ul class="list-disc pl-5 space-y-1 mb-4">
               <li>Welcome Drinks + Mocktails</li>
-              <li>6 Veg Starters + 2 Non-Veg Starters</li>
-              <li>Main Course - 4 Veg + 3 Non-Veg</li>
+              <li>6 Veg + 2 Non-Veg Starters</li>
+              <li>4 Veg + 3 Non-Veg Main Course</li>
               <li>Rice, Breads & Salads</li>
               <li>Desserts + Fruit Platter</li>
             </ul>
-            <div class="details text-left mt-5 text-gray-200"></div>
+            <button class="btn-primary px-4 py-2 rounded-md transition" onclick="window.location.href='user-login.html'">
+              Book Now
+            </button>
           </div>
-
-          <!-- Package Premium -->
-          <div id="Premium" class="package bg-white bg-opacity-10 p-6 cursor-pointer" onclick="togglePackage(this)">
-            <h3 class="text-2xl font-bold mb-3 text-yellow-300">Premium Package</h3>
-            <p class="text-gray-300 mb-2 font-semibold">Serves: 200 People</p>
-            <p class="text-gray-300 mb-3 font-semibold">Price: ₹ 1,20,000</p>
-            <ul class="list-disc list-inside text-gray-400">
+        </div>
+      </div>
+      
+      <!-- Premium Package -->
+      <div class="package" onclick="togglePackage(this, event)">
+        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+             alt="Premium Package" class="w-full h-48 object-cover">
+        <div class="package-content">
+          <h3 class="text-xl font-bold text-accent mb-2">Premium Package</h3>
+          <p class="mb-4">For grand celebrations</p>
+          <div class="package-details">
+            <p class="font-semibold mb-2">Price: ₹1,20,000 (for 200 people)</p>
+            <ul class="list-disc pl-5 space-y-1 mb-4">
               <li>Welcome Drinks + Cocktails</li>
-              <li>8 Veg Starters + 5 Non-Veg Starters</li>
-              <li>Main Course - 6 Veg + 5 Non-Veg + Seafood</li>
+              <li>8 Veg + 5 Non-Veg Starters</li>
+              <li>6 Veg + 5 Non-Veg + Seafood Main Course</li>
               <li>Rice, Breads, Salads & Soups</li>
               <li>Desserts + Cheese & Fruit Platter</li>
               <li>Live Counters and Buffet Service</li>
             </ul>
-            <div class="details text-left mt-5 text-gray-200"></div>
+            <button class="btn-primary px-4 py-2 rounded-md transition" onclick="window.location.href='user-login.html'">
+              Book Now
+            </button>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
     <!-- Testimonials -->
-    <section id="testimonials" class="py-20 bg-black bg-opacity-70"> <!-- Reduced opacity -->
-      <div class="max-w-5xl mx-auto px-6 text-center">
-        <h2 class="text-4xl font-extrabold text-yellow-400 mb-8">What Our Clients Say</h2>
+    <section id="testimonials" class="py-12 md:py-20 content-section">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-accent mb-6 md:mb-8">What Our Clients Say</h2>
 
-        <div class="relative overflow-hidden rounded-xl bg-white bg-opacity-10 p-10 max-w-3xl mx-auto text-gray-200 shadow-lg">
-          <div id="testimonial-text" class="text-xl italic mb-6 min-h-[120px]"></div>
-          <div id="testimonial-author" class="font-bold text-yellow-300 mb-6"></div>
+        <div class="relative overflow-hidden testimonial-container rounded-xl p-6 md:p-10 max-w-3xl mx-auto text-muted">
+          <div id="testimonial-text" class="text-base md:text-xl italic mb-4 md:mb-6 min-h-[80px] md:min-h-[120px]"></div>
+          <div id="testimonial-author" class="font-bold text-accent mb-4 md:mb-6 text-sm md:text-base"></div>
+          <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white dark:from-black to-transparent"></div>
 
-          <div class="flex justify-center gap-6">
+          <div class="flex justify-center gap-4 md:gap-6 mt-6">
             <button class="testimonial-btn" onclick="prevTestimonial()">‹</button>
+            <div class="flex items-center gap-1" id="testimonialIndicators"></div>
             <button class="testimonial-btn" onclick="nextTestimonial()">›</button>
           </div>
         </div>
@@ -258,143 +672,151 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 bg-black bg-opacity-80"> <!-- Reduced opacity -->
-      <div class="max-w-4xl mx-auto px-6 text-center text-gray-200">
-        <h2 class="text-4xl font-extrabold text-yellow-400 mb-6">Contact Us</h2>
-        <p class="mb-10">Have questions or want to book? Reach out and we'll get back to you promptly.</p>
+    <section id="contact" class="py-12 md:py-20 content-section">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-accent mb-4 md:mb-6">Contact Us</h2>
+        <p class="mb-6 md:mb-10 text-sm md:text-base text-muted">Have questions or want to book? Reach out and we'll get back to you promptly.</p>
 
-        <form id="contactForm" class="max-w-xl mx-auto space-y-6 text-left" novalidate>
+        <form id="contactForm" class="contact-form max-w-xl mx-auto space-y-4 md:space-y-6 text-left" novalidate>
           <div>
-            <label for="name" class="block mb-2 font-semibold">Name</label>
+            <label for="name" class="block mb-1 md:mb-2 font-semibold text-sm md:text-base">Name</label>
             <input type="text" id="name" name="name"
-              class="w-full p-3 rounded-md text-black focus:outline-yellow-400 focus:ring-2 focus:ring-yellow-400"
+              class="w-full p-2 md:p-3 rounded-md border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent text-sm md:text-base bg-white dark:bg-gray-700"
               required />
-            <p class="text-red-500 text-sm hidden mt-1" id="nameError">Please enter your name</p>
+            <p class="text-red-500 text-xs md:text-sm hidden mt-1" id="nameError">Please enter your name</p>
           </div>
 
           <div>
-            <label for="email" class="block mb-2 font-semibold">Email</label>
+            <label for="email" class="block mb-1 md:mb-2 font-semibold text-sm md:text-base">Email</label>
             <input type="email" id="email" name="email"
-              class="w-full p-3 rounded-md text-black focus:outline-yellow-400 focus:ring-2 focus:ring-yellow-400"
+              class="w-full p-2 md:p-3 rounded-md border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent text-sm md:text-base bg-white dark:bg-gray-700"
               required />
-            <p class="text-red-500 text-sm hidden mt-1" id="emailError">Please enter a valid email</p>
+            <p class="text-red-500 text-xs md:text-sm hidden mt-1" id="emailError">Please enter a valid email</p>
           </div>
 
           <div>
-            <label for="message" class="block mb-2 font-semibold">Message</label>
-            <textarea id="message" name="message" rows="5"
-              class="w-full p-3 rounded-md text-black resize-y focus:outline-yellow-400 focus:ring-2 focus:ring-yellow-400"
+            <label for="message" class="block mb-1 md:mb-2 font-semibold text-sm md:text-base">Message</label>
+            <textarea id="message" name="message" rows="4"
+              class="w-full p-2 md:p-3 rounded-md border border-gray-200 dark:border-gray-600 resize-y focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent text-sm md:text-base bg-white dark:bg-gray-700"
               required></textarea>
-            <p class="text-red-500 text-sm hidden mt-1" id="messageError">Please enter a message</p>
+            <p class="text-red-500 text-xs md:text-sm hidden mt-1" id="messageError">Please enter a message</p>
           </div>
 
           <button
-            class="bg-yellow-400 text-black font-bold px-8 py-3 rounded-lg hover:bg-yellow-500 transition w-full md:w-auto"
+            class="btn-primary font-bold px-6 py-2 md:px-8 md:py-3 rounded-lg hover:bg-accent-hover transition w-full text-sm md:text-base"
             type="submit">Send Message</button>
 
-          <p id="formSuccess" class="text-green-400 font-semibold mt-4 hidden">Thanks for reaching out! We'll get back
-            to
-            you soon.</p>
+          <p id="formSuccess" class="text-green-600 dark:text-green-400 font-semibold mt-2 md:mt-4 hidden text-sm md:text-base">Thanks for reaching out! We'll get back to you soon.</p>
         </form>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-black bg-opacity-95 text-gray-400 text-center py-6 mt-auto">
+    <footer class="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-center py-4 md:py-6 mt-auto text-sm md:text-base border-t border-gray-200 dark:border-gray-700">
       <p>© 2025 Indian Catering Service. All rights reserved.</p>
       <p>
-        Developed by <a href="#" class="text-yellow-400 hover:underline">Your Name</a>
+        Developed by <a href="#" class="text-accent hover:underline">Your Name</a>
       </p>
     </footer>
   </div>
 
   <script>
-    // Package descriptions for toggle
-    const packageDetails = {
-      Basic: `
-        <h4 class="font-semibold text-yellow-300 mb-3">Package Details</h4>
-        <p>Our Basic Package is perfect for intimate gatherings and smaller events. It includes:</p>
-        <ul class="list-disc ml-6 mt-2 space-y-1">
-          <li>Welcome Drinks to refresh your guests</li>
-          <li>4 varieties of vegetarian starters made with fresh local ingredients</li>
-          <li>A wholesome main course including 3 vegetarian and 1 non-vegetarian dish</li>
-          <li>Assortment of rice and breads baked fresh</li>
-          <li>Delicious desserts to finish the meal on a sweet note</li>
-        </ul>
-        <p class="mt-3 font-semibold">Service Style: Buffet</p>
-        <p>Duration: Up to 3 hours</p>
-        <p class="mt-2 text-yellow-300 font-bold">Ideal for small weddings, birthdays, and private parties.</p>
-      `,
-      Standard: `
-        <h4 class="font-semibold text-yellow-300 mb-3">Package Details</h4>
-        <p>The Standard Package offers a richer variety and larger quantity, suitable for medium-sized events:</p>
-        <ul class="list-disc ml-6 mt-2 space-y-1">
-          <li>Welcome Drinks & refreshing Mocktails</li>
-          <li>6 vegetarian and 2 non-vegetarian starters crafted by our chefs</li>
-          <li>Main course with 4 vegetarian and 3 non-vegetarian dishes, offering diverse flavors</li>
-          <li>Variety of rice, breads, and fresh salads</li>
-          <li>Delectable desserts accompanied by fresh fruit platters</li>
-        </ul>
-        <p class="mt-3 font-semibold">Service Style: Buffet with live salad counter</p>
-        <p>Duration: Up to 4 hours</p>
-        <p class="mt-2 text-yellow-300 font-bold">Great for larger weddings, anniversary parties, and corporate events.</p>
-      `,
-      Premium: `
-        <h4 class="font-semibold text-yellow-300 mb-3">Package Details</h4>
-        <p>Our Premium Package is designed for grand celebrations and offers an extensive menu:</p>
-        <ul class="list-disc ml-6 mt-2 space-y-1">
-          <li>Welcome Drinks & specialty Cocktails prepared by mixologists</li>
-          <li>8 vegetarian and 5 non-vegetarian starters including seafood options</li>
-          <li>Extensive main course with 6 vegetarian, 5 non-vegetarian dishes, and live cooking stations</li>
-          <li>Rice, breads, salads, soups, and gourmet sides</li>
-          <li>Deluxe desserts, cheese, and fresh fruit platters</li>
-          <li>Full-service buffet with professional staff and live counters</li>
-        </ul>
-        <p class="mt-3 font-semibold">Service Style: Full buffet with live stations and table service</p>
-        <p>Duration: Up to 6 hours</p>
-        <p class="mt-2 text-yellow-300 font-bold">Perfect for large weddings, gala dinners, and luxury events.</p>
-      `
-    };
-
-    // Package toggle logic
-    document.addEventListener('click', function (e) {
-      const packageElement = e.target.closest('.package');
-
-      // Collapse all packages if clicked outside
-      if (!packageElement) {
-        document.querySelectorAll('.package').forEach(pkg => {
-          pkg.classList.remove('expanded', 'shrinked');
-          pkg.querySelector('.details').classList.remove('open');
-          pkg.querySelector('.details').innerHTML = '';
-        });
-        return;
+    // Theme switching functionality
+    function setTheme(theme) {
+      if (theme === 'light') {
+        document.body.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        updateThemeOptions('light');
+      } else {
+        document.body.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        updateThemeOptions('dark');
       }
-
-      // Collapse all packages initially
-      document.querySelectorAll('.package').forEach(pkg => {
-        pkg.classList.remove('expanded', 'shrinked');
-        pkg.querySelector('.details').classList.remove('open');
-        pkg.querySelector('.details').innerHTML = '';
-      });
-
-      // Expand clicked package and shrink others
-      packageElement.classList.add('expanded');
-      document.querySelectorAll('.package').forEach(pkg => {
-        if (pkg !== packageElement) {
-          pkg.classList.add('shrinked');
+    }
+    
+    function updateThemeOptions(selectedTheme) {
+      // Update desktop dropdown
+      document.querySelectorAll('.theme-dropdown-content .theme-option').forEach(option => {
+        option.classList.remove('active');
+        if ((option.textContent.toLowerCase().includes('light') && selectedTheme === 'light') ||
+            (option.textContent.toLowerCase().includes('dark') && selectedTheme === 'dark')) {
+          option.classList.add('active');
         }
       });
+      
+      // Update mobile options
+      document.querySelectorAll('.mobile-menu .theme-option').forEach(option => {
+        option.classList.remove('active');
+        if ((option.textContent.toLowerCase().includes('light') && selectedTheme === 'light') ||
+            (option.textContent.toLowerCase().includes('dark') && selectedTheme === 'dark')) {
+          option.classList.add('active');
+        }
+      });
+    }
+    
+    // Check for saved theme preference or use preferred color scheme
+    const currentTheme = localStorage.getItem('theme') || 
+                        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    // Apply the current theme
+    setTheme(currentTheme);
+    
+    // Mobile menu toggle
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const hamburger = document.getElementById('hamburger');
+      menu.classList.toggle('open');
+      hamburger.classList.toggle('open');
+    }
 
-      // Populate and open details for specific package
-      const id = packageElement.id;
-      const detailsDiv = packageElement.querySelector('.details');
-      detailsDiv.innerHTML = packageDetails[id];
-      detailsDiv.classList.add('open');
-
-      // If necessary, scroll into view nicely
-      packageElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
+    // Enhanced Package Toggle Functionality
+    function togglePackage(clickedPackage, event) {
+      // Stop event propagation to prevent immediate collapse
+      event.stopPropagation();
+      
+      const allPackages = document.querySelectorAll('.package');
+      const wasExpanded = clickedPackage.classList.contains('expanded');
+      
+      // Collapse all packages first
+      allPackages.forEach(pkg => {
+        pkg.classList.remove('expanded', 'shrinked');
+      });
+      
+      // If the clicked package wasn't already expanded, expand it
+      if (!wasExpanded) {
+        clickedPackage.classList.add('expanded');
+        
+        // Shrink other packages
+        allPackages.forEach(pkg => {
+          if (pkg !== clickedPackage) {
+            pkg.classList.add('shrinked');
+          }
+        });
+        
+        // Smooth scroll to the expanded package (for mobile)
+        if (window.innerWidth < 768) {
+          setTimeout(() => {
+            clickedPackage.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          }, 100);
+        }
+      }
+    }
+    
+    // Close packages when clicking outside
+    document.addEventListener('click', function() {
+      const allPackages = document.querySelectorAll('.package');
+      allPackages.forEach(pkg => {
+        pkg.classList.remove('expanded', 'shrinked');
+      });
+    });
+    
+    // Prevent package from collapsing when clicking inside
+    document.querySelectorAll('.package').forEach(pkg => {
+      pkg.addEventListener('click', function(e) {
+        e.stopPropagation();
       });
     });
 
@@ -426,6 +848,7 @@
       const authorEl = document.getElementById('testimonial-author');
       textEl.textContent = testimonials[testimonialIndex].text;
       authorEl.textContent = "— " + testimonials[testimonialIndex].author;
+      updateTestimonialIndicators();
     }
 
     function prevTestimonial() {
@@ -436,6 +859,22 @@
     function nextTestimonial() {
       testimonialIndex = (testimonialIndex + 1) % testimonials.length;
       renderTestimonial();
+    }
+
+    // Update testimonial indicators
+    function updateTestimonialIndicators() {
+      const indicatorsContainer = document.getElementById('testimonialIndicators');
+      indicatorsContainer.innerHTML = '';
+      
+      testimonials.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.className = `w-2 h-2 rounded-full ${index === testimonialIndex ? 'bg-accent' : 'bg-gray-300'}`;
+        dot.onclick = () => {
+          testimonialIndex = index;
+          renderTestimonial();
+        };
+        indicatorsContainer.appendChild(dot);
+      });
     }
 
     // Initial render of testimonial
@@ -497,10 +936,19 @@
           targetElement.scrollIntoView({
             behavior: 'smooth'
           });
+          
+          // Close mobile menu if open
+          if (window.innerWidth < 768) {
+            const menu = document.getElementById('mobileMenu');
+            const hamburger = document.getElementById('hamburger');
+            if (menu.classList.contains('open')) {
+              menu.classList.remove('open');
+              hamburger.classList.remove('open');
+            }
+          }
         }
       });
     });
   </script>
 </body>
-
 </html>

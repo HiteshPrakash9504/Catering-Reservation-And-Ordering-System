@@ -5,49 +5,213 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Order Summary</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    /* Light Theme (default) */
+    :root {
+      --bg-overlay: rgba(255, 255, 255, 0.4);
+      --form-bg: rgba(255, 255, 255, 0.7);
+      --input-bg: rgba(255, 255, 255, 0.6);
+      --text-color: #111827; /* Darker text for better contrast */
+      --text-muted: #4b5563;
+      --accent-color: #4ade80; /* Changed to green for light mode */
+      --accent-hover: #4ade80;
+      --button-text: #ffffff;
+      --border-color: rgba(0, 0, 0, 0.2);
+      --card-bg: rgba(255, 255, 255, 0.6);
+      --footer-bg: rgba(255, 255, 255, 0.8);
+      --header-bg: rgba(255, 255, 255, 0.9);
+      --action-color: #4ade80; /* Keep yellow for actions like buttons */
+      --action-hover: #eab308;
+      --nav-text: #111827;
+    }
+
+    /* Dark Theme */
+    .dark {
+      --bg-overlay: rgba(0, 0, 0, 0.7);
+      --form-bg: rgba(30, 30, 30, 0.8);
+      --input-bg: rgba(40, 40, 40, 0.7);
+      --text-color: #f3f4f6; /* Lighter text for dark mode */
+      --text-muted: #d1d5db;
+      --accent-color: #f59e0b; /* Yellow for dark mode */
+      --accent-hover: #fbbf24;
+      --button-text: #000000;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --card-bg: rgba(9, 9, 9, 0.66);
+      --footer-bg: rgba(0, 0, 0, 0.9);
+      --header-bg: rgba(0, 0, 0, 0.9);
+      --action-color: #f59e0b; /* Yellow for actions */
+      --action-hover: #fbbf24;
+      --nav-text: #ffffff;
+    }
+
     body {
       background-image: url('https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
+      color: var(--text-color);
+      transition: all 0.3s ease;
     }
+
     .overlay-bg {
-      background-color: rgba(0, 0, 0, 0.7);
+      background-color: var(--bg-overlay);
       min-height: 100vh;
+      transition: background-color 0.3s ease;
     }
+
+    .header-bg {
+      background-color: var(--header-bg);
+      transition: background-color 0.3s ease;
+    }
+
+    .header-bg a,
+    .header-bg button,
+    .header-bg .text-primary {
+      color: var(--nav-text) !important;
+      transition: color 0.3s ease;
+    }
+
+    .footer-bg {
+      background-color: var(--footer-bg);
+      transition: background-color 0.3s ease;
+    }
+
+    .text-accent {
+      color: var(--accent-color);
+      transition: color 0.3s ease;
+    }
+
+    .btn-accent {
+      background-color: var(--accent-color);
+      color: var(--button-text);
+      transition: all 0.3s ease;
+    }
+
+    .btn-accent:hover {
+      background-color: var(--accent-hover);
+    }
+
     ::placeholder {
-      color: #ccc;
+      color: var(--text-muted);
+      opacity: 1;
+    }
+
+    /* Form elements */
+    #instructions,
+    #address,
+    #name,
+    #phone,
+    #cartItems {
+      background-color: var(--form-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      transition: all 0.3s ease;
+    }
+
+    /* Theme Dropdown Styles */
+    .theme-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .theme-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: var(--form-bg);
+      min-width: 120px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      z-index: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .theme-dropdown:hover .theme-dropdown-content {
+      display: block;
+    }
+
+    .theme-option {
+      padding: 8px 16px;
+      display: block;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--text-color);
+      background-color: var(--form-bg);
+    }
+
+    .theme-option:hover {
+      background-color: var(--accent-color);
+      color: var(--button-text);
+    }
+
+    .theme-option.active {
+      background-color: var(--accent-color);
+      color: var(--button-text);
+    }
+
+    /* Action buttons (keep yellow in both modes) */
+    .bg-action {
+      background-color: var(--action-color);
+    }
+    .hover\:bg-action:hover {
+      background-color: var(--action-hover);
+    }
+    .text-action {
+      color: var(--action-color);
+    }
+    
+    /* Cart table styles */
+    #cartItemsBody tr {
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    #cartItemsBody tr:hover {
+      background-color: rgba(255, 255, 255, 0.05);
     }
   </style>
 </head>
 <body>
   <div class="overlay-bg">
     <div class="max-w-6xl mx-auto p-6">
-      <!-- Navbar -->
-      <header class="bg-black bg-opacity-80 shadow-md sticky top-0 z-50 mb-8">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center text-white">
+      <!-- Navbar with Theme Toggle -->
+      <header class="header-bg shadow-md sticky top-0 z-50 mb-8">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <h1 class="text-2xl font-bold">Indian Catering</h1>
           <nav class="flex gap-4 items-center">
             <a href="index.html#home" class="hover:underline">Home</a>
-            <button id="logoutBtn" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500">Logout</button>
+            <!-- Theme Dropdown -->
+            <div class="theme-dropdown">
+              <button class="flex items-center gap-1 hover:text-accent">
+                <i class="fas fa-palette"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div class="theme-dropdown-content">
+                <div class="theme-option" onclick="setTheme('light')">Light</div>
+                <div class="theme-option" onclick="setTheme('dark')">Dark</div>
+              </div>
+            </div>
+            <button id="logoutBtn" class="btn-accent px-4 py-2 rounded hover:bg-opacity-90">Logout</button>
           </nav>
         </div>
       </header>
 
-      <h1 class="text-3xl font-bold mb-6 text-yellow-400">Order Summary</h1>
-      <h2 id="categoryName" class="text-2xl font-semibold mb-6 text-yellow-300"></h2>
+      <h1 class="text-3xl font-bold mb-6 text-action">Order Summary</h1>
+      <h2 id="categoryName" class="text-2xl font-semibold mb-6 text-action"></h2>
 
       <!-- Cart Items -->
-      <div id="cartItems" class="bg-gray-800 bg-opacity-60 rounded-lg p-6 mb-8 text-white">
+      <div id="cartItems" class="rounded-lg p-6 mb-8">
         <table class="w-full">
           <thead>
             <tr class="border-b border-gray-700">
-              <th class="text-left py-2 px-4 text-yellow-300">Item</th>
-              <th class="text-right py-2 px-4 text-yellow-300">Price</th>
-              <th class="text-right py-2 px-4 text-yellow-300">Qty</th>
-              <th class="text-right py-2 px-4 text-yellow-300">Subtotal</th>
-              <th class="text-right py-2 px-4 text-yellow-300">Actions</th>
+              <th class="text-left py-2 px-4 text-action">Item</th>
+              <th class="text-right py-2 px-4 text-action">Price</th>
+              <th class="text-right py-2 px-4 text-action">Qty</th>
+              <th class="text-right py-2 px-4 text-action">Subtotal</th>
+              <th class="text-right py-2 px-4 text-action">Actions</th>
             </tr>
           </thead>
           <tbody id="cartItemsBody"></tbody>
@@ -56,56 +220,99 @@
 
       <!-- Empty Cart Message -->
       <div id="emptyCart" class="text-center py-10 hidden">
-        <p class="text-xl text-white">Your cart is empty</p>
-        <a href="index.html" class="mt-4 inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded">
+        <p class="text-xl">Your cart is empty</p>
+        <a href="index.html" class="mt-4 inline-block bg-action hover:bg-action-hover text-black font-bold py-2 px-4 rounded">
           Browse Menu
         </a>
       </div>
 
       <!-- Order Details -->
-      <div class="mt-10 text-white" id="orderDetailsSection">
+      <div class="mt-10" id="orderDetailsSection">
         <div class="mb-8">
           <h2 class="text-xl font-semibold mb-2">Instructions</h2>
-          <textarea id="instructions" rows="4" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white" placeholder="Add any cooking instructions or preferences..."></textarea>
+          <textarea id="instructions" rows="4" class="w-full p-3 rounded border" placeholder="Add any cooking instructions or preferences..."></textarea>
         </div>
 
         <div class="mb-8">
           <h2 class="text-xl font-semibold mb-2">Delivery Address</h2>
-          <textarea id="address" rows="4" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white" placeholder="Enter your full address..." required></textarea>
+          <textarea id="address" rows="4" class="w-full p-3 rounded border" placeholder="Enter your full address..." required></textarea>
         </div>
 
         <div class="mb-8">
           <h2 class="text-xl font-semibold mb-2">Contact Information</h2>
-          <input type="text" id="name" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white mb-3" placeholder="Your Name" required>
-          <input type="tel" id="phone" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white" placeholder="Phone Number" required>
+          <input type="text" id="name" class="w-full p-3 rounded border mb-3" placeholder="Your Name" required>
+          <input type="tel" id="phone" class="w-full p-3 rounded border" placeholder="Phone Number" required>
         </div>
       </div>
 
       <!-- Total Section -->
-      <div class="mt-8 flex justify-between items-center text-white" id="totalSection">
+      <div class="mt-8 flex justify-between items-center" id="totalSection">
         <div>
           <h2 class="text-2xl font-bold">Total: <span id="totalAmount">Rs 0</span></h2>
-          <p class="text-sm text-gray-400">(Inclusive of all taxes)</p>
+          <p class="text-sm text-muted">(Inclusive of all taxes)</p>
         </div>
-        <button id="confirmOrderBtn" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg text-lg">
+        <button id="confirmOrderBtn" class="bg-action hover:bg-action-hover text-black font-bold py-3 px-6 rounded-lg text-lg">
           Confirm Order
         </button>
       </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-black bg-opacity-90 text-white text-center py-4">
+    <footer class="footer-bg text-center py-4">
       &copy; 2025 Indian Catering Services. All rights reserved.
     </footer>
   </div>
 
   <!-- Confirmation Modal -->
-  <div id="confirmationMessage" class="fixed top-0 left-0 w-full bg-yellow-500 text-white p-4 text-lg font-bold hidden z-50">
+  <div id="confirmationMessage" class="fixed top-0 left-0 w-full bg-action text-white p-4 text-lg font-bold hidden z-50">
     <div class="flex justify-between items-center">
       <p>Your order has been placed successfully!</p>
       <button id="okButton" class="bg-white text-green-500 px-4 py-2 rounded">OK</button>
     </div>
   </div>
+
+  <!-- Theme Script -->
+  <script>
+    // Apply saved theme or system preference
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+      updateActiveTheme();
+    }
+
+    // Set theme and save preference
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.body.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+      updateActiveTheme();
+    }
+
+    // Update which theme option is active
+    function updateActiveTheme() {
+      const isDark = document.body.classList.contains('dark');
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if ((option.textContent.includes('Dark') && isDark) || 
+            (option.textContent.includes('Light') && !isDark)) {
+          option.classList.add('active');
+        }
+      });
+    }
+
+    // Initialize theme on load
+    document.addEventListener('DOMContentLoaded', applyTheme);
+  </script>
 
   <!-- Firebase Integration -->
   <script type="module">
@@ -168,9 +375,9 @@
             <td class="py-3 px-4 text-right">Rs ${item.price}</td>
             <td class="py-3 px-4 text-right">
               <div class="flex items-center justify-end">
-                <button class="bg-yellow-400 text-black font-bold px-2 rounded" onclick="changeQty('${item.name}', -1)">-</button>
+                <button class="bg-action text-black font-bold px-2 rounded" onclick="changeQty('${item.name}', -1)">-</button>
                 <span class="mx-2">${item.quantity}</span>
-                <button class="bg-yellow-400 text-black font-bold px-2 rounded" onclick="changeQty('${item.name}', 1)">+</button>
+                <button class="bg-action text-black font-bold px-2 rounded" onclick="changeQty('${item.name}', 1)">+</button>
               </div>
             </td>
             <td class="py-3 px-4 text-right">Rs ${subtotal}</td>
@@ -260,6 +467,12 @@
         orderDetailsSection.classList.add('hidden');
         totalSection.classList.add('hidden');
       }
+
+      // Logout button functionality
+      document.getElementById('logoutBtn').addEventListener('click', function() {
+        localStorage.removeItem('selectedOrder');
+        window.location.href = "user-login.html";
+      });
     });
   </script>
 </body>

@@ -1,20 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Catering Types</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
+    /* Light Theme (default) */
+    :root {
+      --bg-overlay: rgba(255, 255, 255, 0.7);
+      --form-bg: rgba(255, 255, 255, 0.95);
+      --input-bg: rgba(255, 255, 255, 0.8);
+      --text-color: #333333;
+      --text-muted: #6b7280;
+      --accent-color: #22c55e;
+      --accent-hover: #4ade80;
+      --button-text: #ffffff;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --social-btn: #ffffff;
+      --social-text: #333333;
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --footer-bg: rgba(0, 0, 0, 0.8);
+      --header-bg: rgba(0, 0, 0, 0.8);
+    }
+
+    /* Dark Theme */
+    .dark {
+      --bg-overlay: rgba(0, 0, 0, 0.7);
+      --form-bg: rgba(30, 30, 30, 0.95);
+      --input-bg: rgba(40, 40, 40, 0.8);
+      --text-color: #ffffff;
+      --text-muted: #d1d5db;
+      --accent-color: #f59e0b;
+      --accent-hover: #fbbf24;
+      --button-text: #000000;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --social-btn: #2d3748;
+      --social-text: #ffffff;
+      --card-bg: rgba(0, 0, 0, 0.5);
+      --footer-bg: rgba(0, 0, 0, 0.9);
+      --header-bg: rgba(0, 0, 0, 0.9);
+    }
+
     body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-image: url('https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
+      transition: background-color 0.3s ease;
+      color: var(--text-color);
     }
 
     .overlay-bg {
-      background-color: rgba(0, 0, 0, 0.7);
+      background-color: var(--bg-overlay);
+      transition: background-color 0.3s ease;
+      min-height: 100vh;
+    }
+
+    .text-primary {
+      color: var(--text-color);
+      transition: color 0.3s ease;
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+      transition: color 0.3s ease;
+    }
+
+    .text-accent {
+      color: var(--accent-color);
+      transition: color 0.3s ease;
+    }
+
+    .btn-accent {
+      background-color: var(--accent-color);
+      color: var(--button-text);
+      transition: all 0.3s ease;
+    }
+
+    .btn-accent:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .card-bg {
+      background-color: var(--card-bg);
+      backdrop-filter: blur(5px);
+    }
+
+    .header-bg {
+      background-color: var(--header-bg);
+    }
+
+    .header-bg .text-primary,
+    .header-bg a {
+      color: white !important;
+    }
+
+    .footer-bg {
+      background-color: var(--footer-bg);
+    }
+
+    /* Theme Dropdown Styles */
+    .theme-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .theme-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: var(--form-bg);
+      min-width: 120px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      z-index: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .theme-dropdown:hover .theme-dropdown-content {
+      display: block;
+    }
+
+    .theme-option {
+      padding: 8px 16px;
+      display: block;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--text-color);
+      background-color: var(--form-bg);
+    }
+
+    .theme-option:hover {
+      background-color: var(--accent-color);
+      color: var(--button-text);
+    }
+
+    .theme-option.active {
+      background-color: var(--accent-color);
+      color: var(--button-text);
     }
 
     html {
@@ -23,76 +151,132 @@
   </style>
 </head>
 
-<body class="text-white">
-  <div class="overlay-bg min-h-screen">
-    <!-- ✅ Navbar with Logout -->
-    <header class="bg-black bg-opacity-80 shadow-md sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center text-white">
-        <h1 class="text-2xl font-bold">Indian Catering</h1>
+<body class="relative">
+  <!-- Theme Script -->
+  <script>
+    // Apply saved theme or system preference
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+      updateActiveTheme();
+    }
+
+    // Set theme and save preference
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.body.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      }
+      updateActiveTheme();
+    }
+
+    // Update which theme option is active
+    function updateActiveTheme() {
+      const isDark = document.body.classList.contains('dark');
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if ((option.textContent.includes('Dark') && isDark) || 
+            (option.textContent.includes('Light') && !isDark)) {
+          option.classList.add('active');
+        }
+      });
+    }
+
+    // Initialize theme on load
+    document.addEventListener('DOMContentLoaded', applyTheme);
+  </script>
+
+  <div class="overlay-bg">
+    <!-- Navbar with Logout and Theme Toggle -->
+    <header class="header-bg shadow-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-primary">Indian<span class="text-accent">Catering</span></h1>
         <nav class="flex gap-4 items-center">
-          <a href="index.html#home" class="hover:underline">Home</a>
-          <button onclick="handleLogout()" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-500">Logout</button>
+          <a href="index.html#home" class="hover:underline text-primary">Home</a>
+          <!-- Theme Dropdown -->
+          <div class="theme-dropdown">
+            <button class="flex items-center gap-1 text-primary hover:text-accent">
+              <i class="fas fa-palette"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="theme-dropdown-content">
+              <div class="theme-option" onclick="setTheme('light')">Light</div>
+              <div class="theme-option" onclick="setTheme('dark')">Dark</div>
+            </div>
+          </div>
+          <button onclick="handleLogout()" class="btn-accent px-4 py-2 rounded hover:bg-opacity-90">Logout</button>
         </nav>
       </div>
     </header>
 
-    <!-- 🌟 Catering Type Section -->
+    <!-- Catering Type Section -->
     <section class="py-16 px-4">
       <div class="max-w-6xl mx-auto text-center">
-        <h2 class="text-4xl font-bold text-yellow-400 mb-10">Choose a Catering Type</h2>
+        <h2 class="text-4xl font-bold text-accent mb-10">Choose a Catering Type</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           
           <!-- Wedding -->
-          <a href="catering-packages.html?type=wedding" class="bg-white bg-opacity-10 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2">
+          <a href="catering-packages.html?type=wedding" class="card-bg rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2 border border-opacity-20 border-gray-500">
             <img src="https://www.candidshutters.com/maintenance/wp-content/uploads/2024/06/Best-wedding-photographers-India-Top-5-destination-wedding-photographers-Indian-weddings-2.jpg" alt="Wedding" class="w-full h-48 object-cover rounded-t-lg">
             <div class="p-4">
-              <h3 class="text-xl font-semibold text-yellow-300">Wedding</h3>
-              <p class="text-sm text-gray-300">Grand and elegant feasts tailored for your special day.</p>
+              <h3 class="text-xl font-semibold text-accent">Wedding</h3>
+              <p class="text-sm text-muted">Grand and elegant feasts tailored for your special day.</p>
             </div>
           </a>
 
           <!-- Birthday -->
-          <a href="catering-packages.html?type=birthday" class="bg-white bg-opacity-10 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2">
+          <a href="catering-packages.html?type=birthday" class="card-bg rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2 border border-opacity-20 border-gray-500">
             <img src="https://5.imimg.com/data5/SELLER/Default/2022/4/SK/RX/LH/149898692/birthday-photography-service-500x500.png" alt="Birthday" class="w-full h-48 object-cover rounded-t-lg">
             <div class="p-4">
-              <h3 class="text-xl font-semibold text-yellow-300">Birthday</h3>
-              <p class="text-sm text-gray-300">Fun-filled birthday menus with festive treats.</p>
+              <h3 class="text-xl font-semibold text-accent">Birthday</h3>
+              <p class="text-sm text-muted">Fun-filled birthday menus with festive treats.</p>
             </div>
           </a>
 
           <!-- Festival -->
-          <a href="catering-packages.html?type=festival" class="bg-white bg-opacity-10 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2">
+          <a href="catering-packages.html?type=festival" class="card-bg rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2 border border-opacity-20 border-gray-500">
             <img src="https://cybernag.in/wp-content/uploads/2024/07/diwali-blog-image.jpg" alt="Festival" class="w-full h-48 object-cover rounded-t-lg">
             <div class="p-4">
-              <h3 class="text-xl font-semibold text-yellow-300">Festival</h3>
-              <p class="text-sm text-gray-300">Celebrate Indian festivals with traditional cuisine.</p>
+              <h3 class="text-xl font-semibold text-accent">Festival</h3>
+              <p class="text-sm text-muted">Celebrate Indian festivals with traditional cuisine.</p>
             </div>
           </a>
 
           <!-- Anniversary -->
-          <a href="catering-packages.html?type=anniversary" class="bg-white bg-opacity-10 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2">
+          <a href="catering-packages.html?type=anniversary" class="card-bg rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2 border border-opacity-20 border-gray-500">
             <img src="https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://media.easy-peasy.ai/73c37c0d-4f9d-4880-b75b-1e25e2a534c8/49da3b10-f4ad-489a-a2c4-e33e5669d665.png" alt="Anniversary" class="w-full h-48 object-cover rounded-t-lg">
             <div class="p-4">
-              <h3 class="text-xl font-semibold text-yellow-300">Anniversary</h3>
-              <p class="text-sm text-gray-300">Cherish love with romantic meals and desserts.</p>
+              <h3 class="text-xl font-semibold text-accent">Anniversary</h3>
+              <p class="text-sm text-muted">Cherish love with romantic meals and desserts.</p>
             </div>
           </a>
 
           <!-- Engagement -->
-          <a href="catering-packages.html?type=engagement" class="bg-white bg-opacity-10 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2">
+          <a href="catering-packages.html?type=engagement" class="card-bg rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2 border border-opacity-20 border-gray-500">
             <img src="https://www.thestatesman.com/wp-content/uploads/2020/02/QT-O4-9.jpg" alt="Engagement" class="w-full h-48 object-cover rounded-t-lg">
             <div class="p-4">
-              <h3 class="text-xl font-semibold text-yellow-300">Engagement</h3>
-              <p class="text-sm text-gray-300">Pre-wedding moments with classy culinary delights.</p>
+              <h3 class="text-xl font-semibold text-accent">Engagement</h3>
+              <p class="text-sm text-muted">Pre-wedding moments with classy culinary delights.</p>
             </div>
           </a>
 
           <!-- Special Occasion -->
-          <a href="catering-packages.html?type=special" class="bg-white bg-opacity-10 rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2">
+          <a href="catering-packages.html?type=special" class="card-bg rounded-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-2 border border-opacity-20 border-gray-500">
             <img src="https://c4.wallpaperflare.com/wallpaper/600/321/110/color-colours-festival-hindu-wallpaper-preview.jpg" alt="Special Occasion" class="w-full h-48 object-cover rounded-t-lg">
             <div class="p-4">
-              <h3 class="text-xl font-semibold text-yellow-300">Special Occasion</h3>
-              <p class="text-sm text-gray-300">Tailored menus for every unique event you celebrate.</p>
+              <h3 class="text-xl font-semibold text-accent">Special Occasion</h3>
+              <p class="text-sm text-muted">Tailored menus for every unique event you celebrate.</p>
             </div>
           </a>
 
@@ -100,9 +284,9 @@
       </div>
     </section>
 
-    <!-- ✅ Footer -->
-    <footer class="bg-black bg-opacity-90 text-white text-center py-4">
-      &copy; 2025 Indian Catering Services. All rights reserved.
+    <!-- Footer -->
+    <footer class="footer-bg text-center py-4">
+      <p class="text-muted">&copy; 2025 Indian Catering Services. All rights reserved.</p>
     </footer> 
   </div>
 
@@ -113,7 +297,7 @@
 
       // For placeholder behavior:
       alert("You have been logged out.");
-      window.location.href = "index.html";
+      window.location.href = "user-login.html";
     }
   </script>
 </body>
