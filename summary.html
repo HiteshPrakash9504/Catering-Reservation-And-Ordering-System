@@ -21,8 +21,8 @@
       --card-bg: rgba(255, 255, 255, 0.6);
       --footer-bg: rgba(255, 255, 255, 0.8);
       --header-bg: rgba(255, 255, 255, 0.9);
-      --action-color: #4ade80; /* Keep yellow for actions like buttons */
-      --action-hover: #eab308;
+      --action-color: #4ade80; /* Kept yellow for actions like buttons */
+      --action-hover: #4ade80;
       --nav-text: #111827;
     }
 
@@ -63,6 +63,7 @@
     .header-bg {
       background-color: var(--header-bg);
       transition: background-color 0.3s ease;
+      backdrop-filter: blur(5px); /* Add blur for consistent header look */
     }
 
     .header-bg a,
@@ -75,6 +76,7 @@
     .footer-bg {
       background-color: var(--footer-bg);
       transition: background-color 0.3s ease;
+      backdrop-filter: blur(5px); /* Add blur for consistent footer look */
     }
 
     .text-accent {
@@ -151,7 +153,7 @@
       color: var(--button-text);
     }
 
-    /* Action buttons (keep yellow in both modes) */
+    /* Action buttons (kept yellow as per your design intent) */
     .bg-action {
       background-color: var(--action-color);
     }
@@ -170,18 +172,80 @@
     #cartItemsBody tr:hover {
       background-color: rgba(255, 255, 255, 0.05);
     }
+
+    /* Mobile-specific navigation styles */
+    .mobile-menu-button {
+      display: block; /* Show hamburger icon on small screens */
+    }
+
+    .desktop-nav-links {
+      display: none; /* Hide desktop links on small screens */
+    }
+
+    .mobile-nav-links {
+      display: none; /* Hidden by default */
+      position: absolute;
+      top: 100%; /* Position below the header */
+      right: 1rem;
+      background-color: var(--header-bg); /* Use header background for consistency */
+      backdrop-filter: blur(5px);
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 40; /* Lower than header, higher than content */
+      width: auto; /* Allow content to dictate width */
+      min-width: 150px; /* Ensure a minimum width */
+      text-align: right; /* Align text to the right */
+      flex-direction: column; /* Stack items vertically */
+      gap: 0.5rem; /* Space between items */
+    }
+
+    .mobile-nav-links.active {
+      display: flex; /* Show when active */
+    }
+
+    .mobile-nav-links a,
+    .mobile-nav-links .theme-dropdown,
+    .mobile-nav-links button {
+      padding: 0.5rem 1rem; /* Padding for clickability */
+      width: 100%; /* Make items take full width of the dropdown */
+      text-align: right;
+    }
+    
+    /* Ensure dropdown content within mobile menu aligns right */
+    .mobile-nav-links .theme-dropdown .theme-dropdown-content {
+        right: 0;
+        left: auto; /* Override any left alignment */
+    }
+
+
+    /* Adjust layout for screens larger than mobile breakpoint (md) */
+    @media (min-width: 768px) {
+      .mobile-menu-button {
+        display: none; /* Hide hamburger icon on larger screens */
+      }
+      .desktop-nav-links {
+        display: flex; /* Show desktop links on larger screens */
+        align-items: center;
+        gap: 1rem; /* Space between desktop nav items */
+      }
+      .header-bg .max-w-7xl {
+        flex-direction: row; /* Ensure row direction for desktop */
+        align-items: center;
+      }
+      .header-bg nav {
+        width: auto; /* Reset width for desktop */
+      }
+    }
   </style>
 </head>
 <body>
   <div class="overlay-bg">
-    <div class="max-w-6xl mx-auto p-6">
-      <!-- Navbar with Theme Toggle -->
-      <header class="header-bg shadow-md sticky top-0 z-50 mb-8">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 class="text-2xl font-bold">Indian Catering</h1>
-          <nav class="flex gap-4 items-center">
+    <div class="max-w-6xl mx-auto p-4 md:p-6"> <header class="header-bg shadow-md sticky top-0 z-50 mb-8">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center relative"> <h1 class="text-2xl font-bold">Indian Catering</h1>
+          
+          <nav class="desktop-nav-links">
             <a href="index.html#home" class="hover:underline">Home</a>
-            <!-- Theme Dropdown -->
             <div class="theme-dropdown">
               <button class="flex items-center gap-1 hover:text-accent">
                 <i class="fas fa-palette"></i>
@@ -196,29 +260,45 @@
             </div>
             <button id="logoutBtn" class="btn-accent px-4 py-2 rounded hover:bg-opacity-90">Logout</button>
           </nav>
+
+          <button class="mobile-menu-button text-nav-text text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+
+          <nav class="mobile-nav-links" id="mobileNavLinks">
+            <a href="index.html#home" class="hover:underline">Home</a>
+            <div class="theme-dropdown">
+              <button class="flex items-center gap-1 hover:text-accent w-full justify-end"> <i class="fas fa-palette"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div class="theme-dropdown-content">
+                <div class="theme-option" onclick="setTheme('light')">Light</div>
+                <div class="theme-option" onclick="setTheme('dark')">Dark</div>
+              </div>
+            </div>
+            <button id="logoutBtnMobile" class="btn-accent px-4 py-2 rounded hover:bg-opacity-90">Logout</button>
+          </nav>
         </div>
       </header>
 
       <h1 class="text-3xl font-bold mb-6 text-action">Order Summary</h1>
       <h2 id="categoryName" class="text-2xl font-semibold mb-6 text-action"></h2>
 
-      <!-- Cart Items -->
-      <div id="cartItems" class="rounded-lg p-6 mb-8">
-        <table class="w-full">
-          <thead>
+      <div id="cartItems" class="rounded-lg p-4 md:p-6 mb-8 overflow-x-auto"> <table class="w-full min-w-[600px] sm:min-w-full"> <thead>
             <tr class="border-b border-gray-700">
-              <th class="text-left py-2 px-4 text-action">Item</th>
-              <th class="text-right py-2 px-4 text-action">Price</th>
-              <th class="text-right py-2 px-4 text-action">Qty</th>
-              <th class="text-right py-2 px-4 text-action">Subtotal</th>
-              <th class="text-right py-2 px-4 text-action">Actions</th>
+              <th class="text-left py-2 px-2 md:px-4 text-action">Item</th>
+              <th class="text-right py-2 px-2 md:px-4 text-action">Price</th>
+              <th class="text-right py-2 px-2 md:px-4 text-action">Qty</th>
+              <th class="text-right py-2 px-2 md:px-4 text-action">Subtotal</th>
+              <th class="text-right py-2 px-2 md:px-4 text-action">Actions</th>
             </tr>
           </thead>
           <tbody id="cartItemsBody"></tbody>
         </table>
       </div>
 
-      <!-- Empty Cart Message -->
       <div id="emptyCart" class="text-center py-10 hidden">
         <p class="text-xl">Your cart is empty</p>
         <a href="index.html" class="mt-4 inline-block bg-action hover:bg-action-hover text-black font-bold py-2 px-4 rounded">
@@ -226,7 +306,6 @@
         </a>
       </div>
 
-      <!-- Order Details -->
       <div class="mt-10" id="orderDetailsSection">
         <div class="mb-8">
           <h2 class="text-xl font-semibold mb-2">Instructions</h2>
@@ -245,33 +324,25 @@
         </div>
       </div>
 
-      <!-- Total Section -->
-      <div class="mt-8 flex justify-between items-center" id="totalSection">
-        <div>
+      <div class="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4" id="totalSection"> <div>
           <h2 class="text-2xl font-bold">Total: <span id="totalAmount">Rs 0</span></h2>
           <p class="text-sm text-muted">(Inclusive of all taxes)</p>
         </div>
-        <button id="confirmOrderBtn" class="bg-action hover:bg-action-hover text-black font-bold py-3 px-6 rounded-lg text-lg">
-          Confirm Order
+        <button id="confirmOrderBtn" class="bg-action hover:bg-action-hover text-black font-bold py-3 px-6 rounded-lg text-lg w-full sm:w-auto"> Confirm Order
         </button>
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer-bg text-center py-4">
+    <footer class="footer-bg text-center py-4 mt-8">
       &copy; 2025 Indian Catering Services. All rights reserved.
     </footer>
   </div>
 
-  <!-- Confirmation Modal -->
   <div id="confirmationMessage" class="fixed top-0 left-0 w-full bg-action text-white p-4 text-lg font-bold hidden z-50">
-    <div class="flex justify-between items-center">
-      <p>Your order has been placed successfully!</p>
-      <button id="okButton" class="bg-white text-green-500 px-4 py-2 rounded">OK</button>
-    </div>
+    <div class="flex justify-between items-center max-w-6xl mx-auto"> <p>Your order has been placed successfully!</p>
+      <button id="okButton" class="bg-white text-action px-4 py-2 rounded">OK</button> </div>
   </div>
 
-  <!-- Theme Script -->
   <script>
     // Apply saved theme or system preference
     function applyTheme() {
@@ -312,9 +383,28 @@
 
     // Initialize theme on load
     document.addEventListener('DOMContentLoaded', applyTheme);
+
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+      const mobileNavLinks = document.getElementById('mobileNavLinks');
+      mobileNavLinks.classList.toggle('active');
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+      const mobileNavLinks = document.getElementById('mobileNavLinks');
+      const mobileMenuButton = document.querySelector('.mobile-menu-button');
+      const themeDropdown = document.querySelector('.theme-dropdown'); // Keep theme dropdown open
+      
+      // Check if the click is outside the mobile menu and the menu button
+      // And also ensure it's not inside the theme dropdown itself
+      if (!mobileNavLinks.contains(e.target) && !mobileMenuButton.contains(e.target) && !themeDropdown.contains(e.target)) {
+        mobileNavLinks.classList.remove('active');
+      }
+    });
+
   </script>
 
-  <!-- Firebase Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-analytics.js";
@@ -354,6 +444,11 @@
       const confirmationMessage = document.getElementById('confirmationMessage');
       const okButton = document.getElementById('okButton');
 
+      // Get both logout buttons
+      const logoutBtnDesktop = document.getElementById('logoutBtn');
+      const logoutBtnMobile = document.getElementById('logoutBtnMobile');
+
+
       const orderData = JSON.parse(localStorage.getItem('selectedOrder'));
       let cartData = orderData?.items || [];
       let category = orderData?.category || '';
@@ -371,31 +466,31 @@
           const row = document.createElement('tr');
           row.className = 'border-b border-gray-700 hover:bg-gray-700 hover:bg-opacity-30';
           row.innerHTML = `
-            <td class="py-3 px-4">${item.name}</td>
-            <td class="py-3 px-4 text-right">Rs ${item.price}</td>
-            <td class="py-3 px-4 text-right">
+            <td class="py-3 px-2 md:px-4 text-wrap">${item.name}</td> <td class="py-3 px-2 md:px-4 text-right">Rs ${item.price}</td>
+            <td class="py-3 px-2 md:px-4 text-right">
               <div class="flex items-center justify-end">
                 <button class="bg-action text-black font-bold px-2 rounded" onclick="changeQty('${item.name}', -1)">-</button>
-                <span class="mx-2">${item.quantity}</span>
-                <button class="bg-action text-black font-bold px-2 rounded" onclick="changeQty('${item.name}', 1)">+</button>
+                <span class="mx-2 min-w-[20px] text-center">${item.quantity}</span> <button class="bg-action text-black font-bold px-2 rounded" onclick="changeQty('${item.name}', 1)">+</button>
               </div>
             </td>
-            <td class="py-3 px-4 text-right">Rs ${subtotal}</td>
-            <td class="py-3 px-4 text-right">
+            <td class="py-3 px-2 md:px-4 text-right">Rs ${subtotal}</td>
+            <td class="py-3 px-2 md:px-4 text-right">
               <button class="bg-red-500 hover:bg-red-600 text-white font-bold px-3 py-1 rounded text-sm" onclick="removeItem('${item.name}')">Remove</button>
             </td>
           `;
           cartItemsBody.appendChild(row);
         });
 
-        const totalRow = document.createElement('tr');
-        totalRow.className = 'font-bold';
-        totalRow.innerHTML = `
-          <td class="py-3 px-4 text-right" colspan="3">Total:</td>
-          <td class="py-3 px-4 text-right">Rs ${total}</td>
-          <td></td>
-        `;
-        cartItemsBody.appendChild(totalRow);
+        if (cartData.length > 0) {
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'font-bold';
+            totalRow.innerHTML = `
+              <td class="py-3 px-2 md:px-4 text-right" colspan="3">Total:</td>
+              <td class="py-3 px-2 md:px-4 text-right">Rs ${total}</td>
+              <td></td>
+            `;
+            cartItemsBody.appendChild(totalRow);
+        }
         totalAmountDisplay.textContent = `Rs ${total}`;
       }
 
@@ -437,6 +532,11 @@
           alert("Please fill in your name, phone, and address before placing the order.");
           return;
         }
+        if (cartData.length === 0) {
+          alert("Your cart is empty. Please add items before placing an order.");
+          return;
+        }
+
 
         const orderDetails = {
           name,
@@ -469,7 +569,12 @@
       }
 
       // Logout button functionality
-      document.getElementById('logoutBtn').addEventListener('click', function() {
+      logoutBtnDesktop.addEventListener('click', function() {
+        localStorage.removeItem('selectedOrder');
+        window.location.href = "user-login.html";
+      });
+
+      logoutBtnMobile.addEventListener('click', function() {
         localStorage.removeItem('selectedOrder');
         window.location.href = "user-login.html";
       });

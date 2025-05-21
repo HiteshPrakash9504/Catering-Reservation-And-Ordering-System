@@ -11,31 +11,33 @@
     /* Light Theme (default) */
     :root {
       --bg-overlay: rgba(255, 255, 255, 0.7);
-      --form-bg: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+      --form-bg: rgba(255, 255, 255, 0.9);
       --input-bg: rgba(255, 255, 255, 0.8);
       --text-color: #333333;
       --text-muted: #6b7280;
-      --accent-color: #4ade80; /* Light green */
+      --accent-color: #4ade80;
       --accent-hover: #22c55e;
-      --button-text: #ffffff; /* White text for buttons */
+      --button-text: #ffffff;
       --border-color: rgba(0, 0, 0, 0.1);
       --social-btn: #ffffff;
       --social-text: #333333;
+      --nav-bg: rgba(255, 255, 255, 0.9);
     }
 
     /* Dark Theme */
     .dark {
       --bg-overlay: rgba(0, 0, 0, 0.7);
-      --form-bg: rgba(30, 30, 30, 0.9); /* Semi-transparent dark gray */
+      --form-bg: rgba(30, 30, 30, 0.9);
       --input-bg: rgba(40, 40, 40, 0.8);
       --text-color: #ffffff;
       --text-muted: #d1d5db;
-      --accent-color: #f59e0b; /* Orange */
+      --accent-color: #f59e0b;
       --accent-hover: #fbbf24;
-      --button-text: #000000; /* Black text for orange button */
+      --button-text: #000000;
       --border-color: rgba(255, 255, 255, 0.1);
       --social-btn: #2d3748;
       --social-text: #ffffff;
+      --nav-bg: rgba(30, 30, 30, 0.9);
     }
 
     body {
@@ -45,17 +47,33 @@
       background-position: center;
       background-attachment: fixed;
       transition: background-color 0.3s ease;
+      position: relative; /* Needed for pseudo-element positioning */
+      z-index: 1; /* Ensures body content is above pseudo-element */
     }
 
+    /* This pseudo-element creates the full-screen blurred overlay */
+    body::before {
+      content: '';
+      position: fixed; /* Use fixed so it covers the entire viewport even on scroll */
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--bg-overlay); /* Uses your existing overlay color variable */
+      backdrop-filter: blur(5px); /* Apply blur to the background behind this overlay */
+      z-index: -1; /* Place it behind the body content */
+    }
+
+    /* The original .overlay div is now redundant and can be removed or hidden */
     .overlay {
-      background-color: var(--bg-overlay);
-      transition: background-color 0.3s ease;
+      display: none;
     }
 
     .form-container {
       background-color: var(--form-bg);
       transition: background-color 0.3s ease;
-      backdrop-filter: blur(5px); /* Adds blur effect to the background */
+      backdrop-filter: blur(5px); /* This adds an additional blur to the form itself for aesthetic */
+      /* Keep existing backdrop-filter for form if desired, or remove if the body::before blur is sufficient */
     }
 
     .input-field {
@@ -86,7 +104,6 @@
       transition: all 0.3s ease;
     }
 
-    /* Sign in button */
     .btn-signin {
       background-color: var(--accent-color);
       color: var(--button-text);
@@ -95,12 +112,43 @@
       background-color: var(--accent-hover);
     }
 
-    /* Theme Dropdown Styles */
-    .theme-dropdown {
-      position: relative;
-      display: inline-block;
+    /* Navbar Styles */
+    .navbar {
+      background-color: var(--nav-bg);
+      backdrop-filter: blur(5px); /* Apply blur to the navbar itself for a consistent look */
+      transition: all 0.3s ease;
     }
 
+    /* Mobile menu styles */
+    .mobile-menu-button {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-menu-button {
+        display: block;
+      }
+      
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 1rem;
+        background-color: var(--nav-bg);
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+      }
+      
+      .nav-links.active {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+
+    /* Theme Dropdown Styles */
     .theme-dropdown-content {
       display: none;
       position: absolute;
@@ -144,8 +192,7 @@
   </style>
 </head>
 
-<body class="relative min-h-screen flex items-center justify-center">
-  <!-- Theme Script -->
+<body class="relative min-h-screen">
   <script>
     // Apply saved theme or system preference
     function applyTheme() {
@@ -184,31 +231,34 @@
       });
     }
 
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.classList.toggle('active');
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+      const navLinks = document.querySelector('.nav-links');
+      const mobileButton = document.querySelector('.mobile-menu-button');
+      
+      if (!mobileButton.contains(e.target) && !navLinks.contains(e.target)) {
+        navLinks.classList.remove('active');
+      }
+    });
+
     // Initialize theme on load
     document.addEventListener('DOMContentLoaded', applyTheme);
   </script>
 
-  <!-- Dynamic overlay that changes with theme -->
-  <div class="overlay absolute inset-0 z-0"></div>
-
-  <!-- Background image -->
-  <div class="absolute inset-0 bg-cover bg-center z-[-1]" style="background-image: url('https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg');"></div>
-
-  <!-- Login Content -->
-  <div class="form-container relative z-10 p-8 rounded-2xl shadow-lg w-full max-w-5xl flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-10">
-
-    <!-- Left: Food image and branding -->
-    <div class="md:w-1/2 flex flex-col items-center">
-      <h1 class="text-4xl font-bold mb-4 text-primary">Indian<span class="text-accent">Catering</span></h1>
-      <img src="https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg" alt="Food Items" class="w-full max-w-sm rounded-xl" />
-    </div>
-
-    <!-- Right: Login Form -->
-    <div class="form-container md:w-1/2 w-full rounded-xl p-8">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold text-primary">Login</h2>
-        <!-- Theme Dropdown -->
-        <div class="theme-dropdown">
+  <nav class="navbar fixed top-0 left-0 right-0 z-50 shadow-md py-3 px-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="#" class="text-xl font-bold text-primary">Indian<span class="text-accent">Catering</span></a>
+      
+      <div class="flex items-center space-x-4 nav-links md:flex">
+        <a href="#" class="text-primary hover:text-accent transition">Home</a>
+        
+        <div class="theme-dropdown relative">
           <button class="flex items-center gap-1 text-primary hover:text-accent">
             <i class="fas fa-palette"></i>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,9 +271,26 @@
           </div>
         </div>
       </div>
+      
+      <button class="mobile-menu-button text-primary md:hidden" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="form-container relative z-10 p-8 rounded-2xl shadow-lg w-full max-w-5xl mx-auto mt-24 mb-8 flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-10">
+
+    <div class="md:w-1/2 flex flex-col items-center">
+      <h1 class="text-4xl font-bold mb-4 text-primary">Indian<span class="text-accent">Catering</span></h1>
+      <img src="https://img.freepik.com/premium-photo/colorful-fast-food-combo_198067-330.jpg" alt="Food Items" class="w-full max-w-sm rounded-xl" />
+    </div>
+
+    <div class="md:w-1/2 w-full rounded-xl p-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold text-primary">Login</h2>
+      </div>
 
       <form id="loginForm" class="space-y-4">
-        <!-- Email -->
         <div>
           <label class="block text-sm mb-1 text-primary">Email</label>
           <input 
@@ -234,7 +301,6 @@
             required />
         </div>
 
-        <!-- Password -->
         <div>
           <label class="block text-sm mb-1 text-primary">Password</label>
           <input 
@@ -265,11 +331,10 @@
       <p class="mt-6 text-center text-sm text-muted">
         Don't have an account? 
         <a href="register.html" class="text-accent hover:underline">Register for free</a>
-      </p>          
+      </p>              
     </div>
   </div>
 
-  <!-- Firebase & Login Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
